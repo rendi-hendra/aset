@@ -62,6 +62,43 @@ git clone https://github.com/yourusername/aset.git
 cd aset
 ```
 
+### 2.1 Verifikasi dan Konfigurasi PHP (Aktifkan Extension Zip)
+
+Sebelum menjalankan `composer install`, pastikan extension `zip` dan extension lainnya sudah aktif di PHP Anda.
+
+#### Menemukan File php.ini
+
+1. Buka Command Prompt/PowerShell dan jalankan:
+   ```bash
+   php --ini
+   ```
+2. Cari baris yang menunjukkan lokasi file `php.ini`, biasanya di:
+   - **Windows**: `C:\php\php.ini` atau `C:\xampp\php\php.ini` (tergantung instalasi)
+   - **macOS**: `/etc/php.ini` atau `/usr/local/etc/php.ini`
+   - **Linux**: `/etc/php.ini` atau `/etc/php/8.x/cli/php.ini`
+
+#### Mengaktifkan Extension Zip
+
+1. Buka file `php.ini` dengan text editor (Notepad, VS Code, dll)
+2. Cari baris yang berisi `;extension=zip`
+3. Hapus tanda semicolon (`;`) di depannya sehingga menjadi:
+   ```
+   extension=zip
+   ```
+4. Simpan file dan tutup editor
+5. Verifikasi dengan menjalankan:
+   ```bash
+   php -m | findstr zip  # Windows
+   php -m | grep zip     # macOS/Linux
+   ```
+   
+   Jika berhasil, akan muncul output `zip`
+
+**Extension Lainnya yang Harus Aktif untuk CodeIgniter 4:**
+- `;extension=intl` → `extension=intl`
+- `;extension=mbstring` → `extension=mbstring`
+- `;extension=curl` → `extension=curl` (jika ingin menggunakan HTTP library)
+
 ### 3. Install Dependencies dengan Composer
 
 Setelah masuk ke folder project, jalankan:
