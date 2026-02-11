@@ -18,8 +18,8 @@
     </li>
 
     <!-- User -->
-    <li class="nav-item <?= ($uri->getSegment(1) == 'user') ? 'active' : '' ?>">
-        <a class="nav-link" href="<?= base_url('/user') ?>">
+    <li class="nav-item <?= ($uri->getSegment(1) == 'users') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('/users') ?>">
             <i class="bi bi-person-fill"></i>
             <span>User</span>
         </a>
