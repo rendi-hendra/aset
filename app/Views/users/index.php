@@ -30,23 +30,23 @@
                     </thead>
                     <tbody>
                         <?php foreach ($users as $u): ?>
-                        <tr>
-                            <td></td>
-                            <td><?= esc($u['username']) ?></td>
-                            <td><?= esc($u['nama']) ?></td>
-                            <td class="text-center">
-                                <a href="<?= base_url('users/edit/'.$u['userid']) ?>" 
-                                   class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+                            <tr>
+                                <td></td>
+                                <td><?= esc($u['username']) ?></td>
+                                <td><?= esc($u['nama']) ?></td>
+                                <td class="text-center">
+                                    <a href="<?= base_url('users/edit/' . $u['userid']) ?>"
+                                        class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
 
-                                <a href="<?= base_url('users/delete/'.$u['userid']) ?>" 
-                                   onclick="return confirm('Yakin hapus user ini?')" 
-                                   class="btn btn-sm btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
+                                    <a href="<?= base_url('users/delete/' . $u['userid']) ?>"
+                                        onclick="return confirm('Yakin hapus user ini?')"
+                                        class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
                         <?php endforeach ?>
                     </tbody>
                 </table>
@@ -56,52 +56,60 @@
 
 </div>
 
+<script src="<?= base_url('vendor/datatables/dataTables.bootstrap4.min.js') ?>"></script>
+<script src="<?= base_url('vendor/datatables/jquery.dataTables.min.js') ?>"></script>
+<script src="<?= base_url('js/demo/datatables-demo.js') ?>"></script>
+
 <script>
-let table;
+    let table;
 
-$(function() {
+    $(function() {
 
-    table = $('#tabelUser').DataTable({
-        pageLength: 10,
-        responsive: true,
-        fixedHeader: true,
-        order: [[1, 'asc']],
-        language: {
-            search: "Cari:",
-            lengthMenu: "Tampilkan _MENU_ data",
-            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-            paginate: {
-                previous: "‹",
-                next: "›"
+        table = $('#tabelUser').DataTable({
+            pageLength: 10,
+            responsive: true,
+            fixedHeader: true,
+            order: [
+                [1, 'asc']
+            ],
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                paginate: {
+                    previous: "‹",
+                    next: "›"
+                },
+                emptyTable: "Tidak ada data",
+                zeroRecords: "Data tidak ditemukan"
             },
-            emptyTable: "Tidak ada data",
-            zeroRecords: "Data tidak ditemukan"
-        },
-        columnDefs: [
-            {
-                targets: 0,
-                orderable: false,
-                searchable: false,
-                className: 'text-center'
-            },
-            {
-                targets: 3,
-                orderable: false,
-                searchable: false
-            }
-        ],
-        dom: 'ltip'
+            columnDefs: [{
+                    targets: 0,
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center'
+                },
+                {
+                    targets: 3,
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            dom: 'ltip'
+        });
+
+        // Nomor otomatis
+        table.on('order.dt search.dt draw.dt', function() {
+            table.column(0, {
+                    search: 'applied',
+                    order: 'applied'
+                })
+                .nodes()
+                .each(function(cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+        }).draw();
+
     });
-
-    // Nomor otomatis
-    table.on('order.dt search.dt draw.dt', function () {
-        table.column(0, { search: 'applied', order: 'applied' })
-            .nodes()
-            .each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-    }).draw();
-
-});
 </script>
 <?= $this->endSection() ?>
