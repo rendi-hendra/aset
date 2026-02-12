@@ -48,12 +48,10 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     // =================================================
     $routes->group('merk', function ($routes) {
         $routes->get('/', 'Merk::index');
-        $routes->get('create', 'Merk::create');
-        $routes->post('store', 'Merk::store');
-        $routes->get('edit/(:num)', 'Merk::edit/$1');
-        $routes->post('update/(:num)', 'Merk::update/$1');
-        $routes->get('delete/(:num)', 'Merk::delete/$1');
+        $routes->post('save', 'Merk::save');
+        $routes->post('delete', 'Merk::delete');
     });
+
 
     // =================================================
     // LOKASI
