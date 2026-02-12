@@ -23,10 +23,10 @@ class Lokasi extends BaseController
         ]);
     }
 
-    // 1 endpoint untuk insert/update
+    // 1 endpoint untuk insert/update + restore jika lokasikode pernah dihapus
     public function save()
     {
-        $id = $this->request->getPost('lokasiid');
+        $id = $this->request->getPost('lokasiid'); // bisa kosong saat insert
 
         $lokasikode = strtoupper(trim((string)$this->request->getPost('lokasikode')));
         $lokasi     = trim((string)$this->request->getPost('lokasi'));
@@ -35,20 +35,41 @@ class Lokasi extends BaseController
             return redirect()->to('/lokasi')->with('error', 'Kode dan Lokasi wajib diisi.');
         }
 
-        // Validasi unik lokasikode (biar tidak dobel)
-        $exist = $this->lokasiModel->where('lokasikode', $lokasikode);
-        if (!empty($id)) {
-            $exist->where('lokasiid !=', $id);
-        }
-        if ($exist->countAllResults() > 0) {
-            return redirect()->to('/lokasi')->with('error', 'Kode lokasi sudah digunakan.');
-        }
-
         $userId = (int) session()->get('userid');
         $now    = date('Y-m-d H:i:s');
 
+        // Cari lokasikode yang sama, termasuk yang isdeleted=1
+        $existing = $this->lokasiModel
+            ->where('LOWER(lokasikode)', strtolower($lokasikode))
+            ->first();
+
+        if (!empty($existing)) {
+            // Jika sedang edit record yang sama -> lanjut update normal
+            if (!empty($id) && (int)$existing['lokasiid'] === (int)$id) {
+                // lanjut
+            } else {
+                // Kalau ketemu tapi non-aktif -> RESTORE
+                if ((int)$existing['isdeleted'] === 1) {
+                    $this->lokasiModel->update($existing['lokasiid'], [
+                        'lokasikode'  => $lokasikode,
+                        'lokasi'      => $lokasi,
+                        'isdeleted'   => 0,
+                        'updatedby'   => $userId,
+                        'updateddate' => $now,
+                        'deletedby'   => null,
+                        'deleteddate' => null,
+                    ]);
+
+                    return redirect()->to('/lokasi')->with('success', 'Lokasi sebelumnya non-aktif, sudah diaktifkan lagi.');
+                }
+
+                // Kalau masih aktif -> tolak
+                return redirect()->to('/lokasi')->with('error', 'Kode lokasi sudah digunakan.');
+            }
+        }
+
+        // UPDATE
         if (!empty($id)) {
-            // UPDATE
             $this->lokasiModel->update($id, [
                 'lokasikode'  => $lokasikode,
                 'lokasi'      => $lokasi,
@@ -71,7 +92,7 @@ class Lokasi extends BaseController
         return redirect()->to('/lokasi')->with('success', 'Data lokasi berhasil ditambahkan.');
     }
 
-    // soft delete via POST (lebih aman)
+    // soft delete via POST
     public function delete()
     {
         $id = (int) ($this->request->getPost('lokasiid') ?? 0);
