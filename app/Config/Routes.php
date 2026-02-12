@@ -36,12 +36,10 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     // =================================================
     $routes->group('users', function ($routes) {
         $routes->get('/', 'User::index');
-        $routes->get('create', 'User::create');
-        $routes->post('store', 'User::store');
-        $routes->get('edit/(:num)', 'User::edit/$1');
-        $routes->post('update/(:num)', 'User::update/$1');
-        $routes->get('delete/(:num)', 'User::delete/$1');
+        $routes->post('save', 'User::save');
+        $routes->post('delete', 'User::delete');
     });
+
 
     // =================================================
     // MERK
