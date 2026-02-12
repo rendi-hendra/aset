@@ -18,55 +18,74 @@ class Lokasi extends BaseController
     {
         $lokasi = $this->lokasiModel->getLokasi()->findAll();
 
-        $data['lokasi'] = $lokasi;
-
-        return view('lokasi/index', $data);
+        return view('lokasi/index', [
+            'lokasi' => $lokasi
+        ]);
     }
 
-    public function create()
+    // 1 endpoint untuk insert/update
+    public function save()
     {
-        return view('lokasi/form');
-    }
+        $id = $this->request->getPost('lokasiid');
 
-    public function store()
-    {
+        $lokasikode = strtoupper(trim((string)$this->request->getPost('lokasikode')));
+        $lokasi     = trim((string)$this->request->getPost('lokasi'));
+
+        if ($lokasikode === '' || $lokasi === '') {
+            return redirect()->to('/lokasi')->with('error', 'Kode dan Lokasi wajib diisi.');
+        }
+
+        // Validasi unik lokasikode (biar tidak dobel)
+        $exist = $this->lokasiModel->where('lokasikode', $lokasikode);
+        if (!empty($id)) {
+            $exist->where('lokasiid !=', $id);
+        }
+        if ($exist->countAllResults() > 0) {
+            return redirect()->to('/lokasi')->with('error', 'Kode lokasi sudah digunakan.');
+        }
+
+        $userId = (int) session()->get('userid');
+        $now    = date('Y-m-d H:i:s');
+
+        if (!empty($id)) {
+            // UPDATE
+            $this->lokasiModel->update($id, [
+                'lokasikode'  => $lokasikode,
+                'lokasi'      => $lokasi,
+                'updatedby'   => $userId,
+                'updateddate' => $now,
+            ]);
+
+            return redirect()->to('/lokasi')->with('success', 'Data lokasi berhasil diubah.');
+        }
+
+        // INSERT
         $this->lokasiModel->insert([
-            'lokasikode'  => $this->request->getPost('lokasikode'),
-            'lokasi'      => $this->request->getPost('lokasi'),
+            'lokasikode'  => $lokasikode,
+            'lokasi'      => $lokasi,
             'isdeleted'   => 0,
-            'createdby'   => session()->get('userid'),
-            'createddate' => date('Y-m-d H:i:s'),
+            'createdby'   => $userId,
+            'createddate' => $now,
         ]);
 
-        return redirect()->to('/lokasi');
+        return redirect()->to('/lokasi')->with('success', 'Data lokasi berhasil ditambahkan.');
     }
 
-    public function edit($id)
+    // soft delete via POST (lebih aman)
+    public function delete()
     {
-        $data['lokasi'] = $this->lokasiModel->find($id);
-        return view('lokasi/form', $data);
-    }
+        $id = (int) ($this->request->getPost('lokasiid') ?? 0);
 
-    public function update($id)
-    {
-        $this->lokasiModel->update($id, [
-            'lokasikode'  => $this->request->getPost('lokasikode'),
-            'lokasi'      => $this->request->getPost('lokasi'),
-            'updatedby'   => session()->get('userid'),
-            'updateddate' => date('Y-m-d H:i:s'),
-        ]);
+        if ($id <= 0) {
+            return redirect()->to('/lokasi')->with('error', 'Pilih data lokasi dulu.');
+        }
 
-        return redirect()->to('/lokasi');
-    }
-
-    public function delete($id)
-    {
         $this->lokasiModel->update($id, [
             'isdeleted'   => 1,
-            'deletedby'   => session()->get('userid'),
+            'deletedby'   => (int) session()->get('userid'),
             'deleteddate' => date('Y-m-d H:i:s'),
         ]);
 
-        return redirect()->to('/lokasi');
+        return redirect()->to('/lokasi')->with('success', 'Data lokasi berhasil dihapus (non-aktif).');
     }
 }

@@ -60,11 +60,9 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     // =================================================
     $routes->group('lokasi', function ($routes) {
         $routes->get('/', 'Lokasi::index');
-        $routes->get('create', 'Lokasi::create');
-        $routes->post('store', 'Lokasi::store');
-        $routes->get('edit/(:num)', 'Lokasi::edit/$1');
-        $routes->post('update/(:num)', 'Lokasi::update/$1');
-        $routes->get('delete/(:num)', 'Lokasi::delete/$1');
+        $routes->post('save', 'Lokasi::save');
+        $routes->post('delete', 'Lokasi::delete');
     });
+
 
 });
