@@ -7,17 +7,17 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
-$routes->group('users', function($routes) {
-    $routes->get('/', 'UserController::index');
-    $routes->get('create', 'UserController::create');
-    $routes->post('store', 'UserController::store');
-    $routes->get('edit/(:num)', 'UserController::edit/$1');
-    $routes->post('update/(:num)', 'UserController::update/$1');
-    $routes->get('delete/(:num)', 'UserController::delete/$1');
+$routes->group('users', function ($routes) {
+    $routes->get('/', 'User::index');
+    $routes->get('create', 'User::create');
+    $routes->post('store', 'User::store');
+    $routes->get('edit/(:num)', 'User::edit/$1');
+    $routes->post('update/(:num)', 'User::update/$1');
+    $routes->get('delete/(:num)', 'User::delete/$1');
 });
 
 // ===== MERK =====
-$routes->group('merk', function($routes) {
+$routes->group('merk', function ($routes) {
     $routes->get('/', 'Merk::index');
     $routes->get('create', 'Merk::create');
     $routes->post('store', 'Merk::store');
@@ -27,7 +27,7 @@ $routes->group('merk', function($routes) {
 });
 
 // ===== LOKASI =====
-$routes->group('lokasi', function($routes) {
+$routes->group('lokasi', function ($routes) {
     $routes->get('/', 'Lokasi::index');
     $routes->get('create', 'Lokasi::create');
     $routes->post('store', 'Lokasi::store');
