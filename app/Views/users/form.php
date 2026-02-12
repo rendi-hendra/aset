@@ -8,7 +8,11 @@
 
     <div class="card shadow">
         <div class="card-body">
-            <form method="post" action="<?= isset($user) ? base_url('users/update/'.$user['userid']) : base_url('users/store') ?>">
+
+            <form method="post"
+                action="<?= isset($user) ? base_url('users/update/'.$user['userid']) : base_url('users/store') ?>">
+
+                <?= csrf_field() ?>
 
                 <div class="mb-3">
                     <label class="form-label">Username</label>
@@ -22,6 +26,13 @@
                         value="<?= isset($user) ? esc($user['nama']) : '' ?>" required>
                 </div>
 
+                <?php if (!isset($user)) : ?>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                <?php endif; ?>
+
                 <button type="submit" class="btn btn-success">
                     <?= isset($user) ? 'Update' : 'Simpan' ?>
                 </button>
@@ -30,6 +41,7 @@
                     Kembali
                 </a>
             </form>
+
         </div>
     </div>
 </div>

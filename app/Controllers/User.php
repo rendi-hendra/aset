@@ -3,9 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use CodeIgniter\Controller;
 
-class User extends Controller
+class User extends BaseController
 {
     protected $userModel;
 
@@ -15,13 +14,27 @@ class User extends Controller
     }
 
     public function index()
-    {
-        $data['users'] = $this->userModel
-            ->where('isdeleted', 0)
-            ->findAll();
+{
+    $db = \Config\Database::connect();
+    $builder = $db->table('user u');
 
-        return view('users/index', $data);
-    }
+    $builder->select('
+        u.*,
+        c.nama as createdby_name,
+        up.nama as updatedby_name,
+        d.nama as deletedby_name
+    ');
+
+    $builder->join('user c', 'c.userid = u.createdby', 'left');
+    $builder->join('user up', 'up.userid = u.updatedby', 'left');
+    $builder->join('user d', 'd.userid = u.deletedby', 'left');
+
+    $builder->where('u.deleteddate IS NULL');
+
+    $data['users'] = $builder->get()->getResultArray();
+
+    return view('users/index', $data);
+}
 
     public function create()
     {
@@ -31,11 +44,11 @@ class User extends Controller
     public function store()
     {
         $this->userModel->insert([
-            'username'     => $this->request->getPost('username'),
-            'nama'         => $this->request->getPost('nama'),
-            'isdeleted'    => 0,
-            'createdby'    => 1, // ganti dengan session login jika ada
-            'createddate'  => date('Y-m-d H:i:s')
+            'username'    => $this->request->getPost('username'),
+            'nama'        => $this->request->getPost('nama'),
+            'password'    => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+            'createdby'   => session()->get('userid'),
+            'createddate' => date('Y-m-d H:i:s')
         ]);
 
         return redirect()->to('/users');
@@ -50,10 +63,10 @@ class User extends Controller
     public function update($id)
     {
         $this->userModel->update($id, [
-            'username'     => $this->request->getPost('username'),
-            'nama'         => $this->request->getPost('nama'),
-            'updatedby'    => 1,
-            'updateddate'  => date('Y-m-d H:i:s')
+            'username'    => $this->request->getPost('username'),
+            'nama'        => $this->request->getPost('nama'),
+            'updatedby'   => session()->get('userid'),
+            'updateddate' => date('Y-m-d H:i:s')
         ]);
 
         return redirect()->to('/users');
@@ -62,9 +75,8 @@ class User extends Controller
     public function delete($id)
     {
         $this->userModel->update($id, [
-            'isdeleted'    => 1,
-            'deletedby'    => 1,
-            'deleteddate'  => date('Y-m-d H:i:s')
+            'deletedby'   => session()->get('userid'),
+            'deleteddate' => date('Y-m-d H:i:s')
         ]);
 
         return redirect()->to('/users');
