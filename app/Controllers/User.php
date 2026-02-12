@@ -14,27 +14,13 @@ class User extends BaseController
     }
 
     public function index()
-{
-    $db = \Config\Database::connect();
-    $builder = $db->table('user u');
+    {
+        $users = $this->userModel->getUser()->findAll();
 
-    $builder->select('
-        u.*,
-        c.nama as createdby_name,
-        up.nama as updatedby_name,
-        d.nama as deletedby_name
-    ');
+        $data['users'] = $users;
 
-    $builder->join('user c', 'c.userid = u.createdby', 'left');
-    $builder->join('user up', 'up.userid = u.updatedby', 'left');
-    $builder->join('user d', 'd.userid = u.deletedby', 'left');
-
-    $builder->where('u.deleteddate IS NULL');
-
-    $data['users'] = $builder->get()->getResultArray();
-
-    return view('users/index', $data);
-}
+        return view('users/index', $data);
+    }
 
     public function create()
     {
@@ -75,8 +61,9 @@ class User extends BaseController
     public function delete($id)
     {
         $this->userModel->update($id, [
+            'isdeleted' => 1,
             'deletedby'   => session()->get('userid'),
-            'deleteddate' => date('Y-m-d H:i:s')
+            'deleteddate' => date('Y-m-d H:i:s'),
         ]);
 
         return redirect()->to('/users');

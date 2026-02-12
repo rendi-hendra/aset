@@ -7,54 +7,30 @@ use App\Models\MerkModel;
 
 class Merk extends BaseController
 {
-    protected $merk;
+    protected $merkModel;
 
     public function __construct()
     {
-        $this->merk = new MerkModel();
+        $this->merkModel = new MerkModel();
     }
 
-    /* =========================================
-       LIST DATA
-    ========================================= */
     public function index()
     {
-        $db = \Config\Database::connect();
-        $builder = $db->table('merk m');
+        $merk = $this->merkModel->getMerk()->findAll();
 
-        $builder->select('
-            m.*,
-            c.nama as createdby_name,
-            u.nama as updatedby_name,
-            d.nama as deletedby_name
-        ');
-
-        $builder->join('user c', 'c.userid = m.createdby', 'left');
-        $builder->join('user u', 'u.userid = m.updatedby', 'left');
-        $builder->join('user d', 'd.userid = m.deletedby', 'left');
-
-        $builder->where('m.isdeleted', 0);
-        $builder->orderBy('m.merkid', 'DESC');
-
-        $data['merk'] = $builder->get()->getResultArray();
+        $data['merk'] = $merk;
 
         return view('merk/index', $data);
     }
 
-    /* =========================================
-       FORM CREATE
-    ========================================= */
     public function create()
     {
         return view('merk/form');
     }
 
-    /* =========================================
-       SIMPAN DATA
-    ========================================= */
     public function store()
     {
-        $this->merk->insert([
+        $this->merkModel->insert([
             'merk'        => $this->request->getPost('merk'),
             'isdeleted'   => 0,
             'createdby'   => session()->get('userid'),
@@ -64,21 +40,15 @@ class Merk extends BaseController
         return redirect()->to('/merk');
     }
 
-    /* =========================================
-       FORM EDIT
-    ========================================= */
     public function edit($id)
     {
-        $data['merk'] = $this->merk->find($id);
+        $data['merk'] = $this->merkModel->find($id);
         return view('merk/form', $data);
     }
 
-    /* =========================================
-       UPDATE DATA
-    ========================================= */
     public function update($id)
     {
-        $this->merk->update($id, [
+        $this->merkModel->update($id, [
             'merk'        => $this->request->getPost('merk'),
             'updatedby'   => session()->get('userid'),
             'updateddate' => date('Y-m-d H:i:s'),
@@ -87,12 +57,9 @@ class Merk extends BaseController
         return redirect()->to('/merk');
     }
 
-    /* =========================================
-       SOFT DELETE
-    ========================================= */
     public function delete($id)
     {
-        $this->merk->update($id, [
+        $this->merkModel->update($id, [
             'isdeleted'   => 1,
             'deletedby'   => session()->get('userid'),
             'deleteddate' => date('Y-m-d H:i:s'),

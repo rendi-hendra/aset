@@ -7,19 +7,18 @@ use App\Models\LokasiModel;
 
 class Lokasi extends BaseController
 {
-    protected $lokasi;
+    protected $lokasiModel;
 
     public function __construct()
     {
-        $this->lokasi = new LokasiModel();
+        $this->lokasiModel = new LokasiModel();
     }
 
     public function index()
     {
-        $data['lokasi'] = $this->lokasi
-            ->where('isdeleted', 0)
-            ->orderBy('lokasiid', 'DESC')
-            ->findAll();
+        $lokasi = $this->lokasiModel->getLokasi()->findAll();
+
+        $data['lokasi'] = $lokasi;
 
         return view('lokasi/index', $data);
     }
@@ -31,11 +30,11 @@ class Lokasi extends BaseController
 
     public function store()
     {
-        $this->lokasi->insert([
+        $this->lokasiModel->insert([
             'lokasikode'  => $this->request->getPost('lokasikode'),
             'lokasi'      => $this->request->getPost('lokasi'),
             'isdeleted'   => 0,
-            'createdby'   => 1,
+            'createdby'   => session()->get('userid'),
             'createddate' => date('Y-m-d H:i:s'),
         ]);
 
@@ -44,16 +43,16 @@ class Lokasi extends BaseController
 
     public function edit($id)
     {
-        $data['lokasi'] = $this->lokasi->find($id);
+        $data['lokasi'] = $this->lokasiModel->find($id);
         return view('lokasi/form', $data);
     }
 
     public function update($id)
     {
-        $this->lokasi->update($id, [
+        $this->lokasiModel->update($id, [
             'lokasikode'  => $this->request->getPost('lokasikode'),
             'lokasi'      => $this->request->getPost('lokasi'),
-            'updatedby'   => 1,
+            'updatedby'   => session()->get('userid'),
             'updateddate' => date('Y-m-d H:i:s'),
         ]);
 
@@ -62,9 +61,9 @@ class Lokasi extends BaseController
 
     public function delete($id)
     {
-        $this->lokasi->update($id, [
+        $this->lokasiModel->update($id, [
             'isdeleted'   => 1,
-            'deletedby'   => 1,
+            'deletedby'   => session()->get('userid'),
             'deleteddate' => date('Y-m-d H:i:s'),
         ]);
 
