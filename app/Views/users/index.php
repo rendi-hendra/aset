@@ -51,7 +51,7 @@
                 <div class="form-group">
                   <label class="mb-1">Password</label>
                   <input type="password" class="form-control" name="password" id="password" maxlength="200"
-                         placeholder="Kosongkan = default / tidak berubah">
+                    placeholder="Kosongkan = default / tidak berubah">
                   <small class="text-muted">* Saat edit: isi hanya jika ingin ganti password.</small>
                 </div>
 
@@ -67,7 +67,7 @@
                   <select class="form-control" name="userlevelid" id="userlevelid">
                     <option value="0">Superadmin</option>
                     <option value="1">Admin</option>
-                    <option value="3" selected>User</option>
+                    <option value="2" selected>User</option>
                     <option value="99">Guest</option>
                   </select>
                 </div>
@@ -107,17 +107,17 @@
           <?php else: ?>
             <?php foreach ($users as $u): ?>
               <?php
-                $statusText  = ((int)$u['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
-                $createdDate = !empty($u['createddate']) ? date('Y-m-d', strtotime($u['createddate'])) : '';
-                $dibuatOleh  = $u['createdby_name'] ?? '-';
-                $diubahOleh  = $u['updatedby_name'] ?? '-';
-                $dihapusOleh = $u['deletedby_name'] ?? '-';
+              $statusText  = ((int)$u['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
+              $createdDate = !empty($u['createddate']) ? date('Y-m-d', strtotime($u['createddate'])) : '';
+              $dibuatOleh  = $u['createdby_name'] ?? '-';
+              $diubahOleh  = $u['updatedby_name'] ?? '-';
+              $dihapusOleh = $u['deletedby_name'] ?? '-';
               ?>
               <tr class="row-user"
-                  data-id="<?= (int)$u['userid'] ?>"
-                  data-username="<?= esc($u['username']) ?>"
-                  data-nama="<?= esc($u['nama']) ?>"
-                  data-userlevelid="<?= (int)($u['userlevelid'] ?? 3) ?>">
+                data-id="<?= (int)$u['userid'] ?>"
+                data-username="<?= esc($u['username']) ?>"
+                data-nama="<?= esc($u['nama']) ?>"
+                data-userlevelid="<?= (int)($u['userlevelid'] ?? 3) ?>">
                 <td><?= esc($u['username']) ?></td>
                 <td><?= esc($u['nama']) ?></td>
                 <td><?= esc($statusText) ?></td>
@@ -141,57 +141,70 @@
 </div>
 
 <style>
-  #tblUser { table-layout: fixed; width: 100%; }
-  #tblUser td, #tblUser th { vertical-align: middle; }
-  #tblUser tbody tr { cursor: pointer; }
-  #tblUser tbody tr:hover { background: #f8f9fc; }
+  #tblUser {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  #tblUser td,
+  #tblUser th {
+    vertical-align: middle;
+  }
+
+  #tblUser tbody tr {
+    cursor: pointer;
+  }
+
+  #tblUser tbody tr:hover {
+    background: #f8f9fc;
+  }
 </style>
 
 <script>
-(function(){
-  const btnDefault = document.getElementById('btnDefault');
-  const btnHapus   = document.getElementById('btnHapus');
+  (function() {
+    const btnDefault = document.getElementById('btnDefault');
+    const btnHapus = document.getElementById('btnHapus');
 
-  const userid     = document.getElementById('userid');
-  const username   = document.getElementById('username');
-  const password   = document.getElementById('password');
-  const nama       = document.getElementById('nama');
-  const userlevelid= document.getElementById('userlevelid');
+    const userid = document.getElementById('userid');
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    const nama = document.getElementById('nama');
+    const userlevelid = document.getElementById('userlevelid');
 
-  const del_userid = document.getElementById('del_userid');
+    const del_userid = document.getElementById('del_userid');
 
-  function resetFormDefault(){
-    userid.value = '';
-    username.value = '';
-    password.value = '';
-    nama.value = '';
-    userlevelid.value = '3'; // default: User
-    del_userid.value = '';
-    btnHapus.disabled = true;
-
-    document.querySelectorAll('#tblUser tbody tr').forEach(tr => tr.classList.remove('table-active'));
-  }
-
-  btnDefault.addEventListener('click', resetFormDefault);
-
-  document.querySelectorAll('.row-user').forEach(tr => {
-    tr.addEventListener('click', () => {
-      document.querySelectorAll('#tblUser tbody tr').forEach(x => x.classList.remove('table-active'));
-      tr.classList.add('table-active');
-
-      userid.value      = tr.dataset.id;
-      username.value    = tr.dataset.username;
-      nama.value        = tr.dataset.nama;
-      userlevelid.value = tr.dataset.userlevelid || '3';
-
-      // password jangan auto isi (demi keamanan)
+    function resetFormDefault() {
+      userid.value = '';
+      username.value = '';
       password.value = '';
+      nama.value = '';
+      userlevelid.value = '2'; // default: User
+      del_userid.value = '';
+      btnHapus.disabled = true;
 
-      del_userid.value = tr.dataset.id;
-      btnHapus.disabled = false;
+      document.querySelectorAll('#tblUser tbody tr').forEach(tr => tr.classList.remove('table-active'));
+    }
+
+    btnDefault.addEventListener('click', resetFormDefault);
+
+    document.querySelectorAll('.row-user').forEach(tr => {
+      tr.addEventListener('click', () => {
+        document.querySelectorAll('#tblUser tbody tr').forEach(x => x.classList.remove('table-active'));
+        tr.classList.add('table-active');
+
+        userid.value = tr.dataset.id;
+        username.value = tr.dataset.username;
+        nama.value = tr.dataset.nama;
+        userlevelid.value = tr.dataset.userlevelid || '2';
+
+        // password jangan auto isi (demi keamanan)
+        password.value = '';
+
+        del_userid.value = tr.dataset.id;
+        btnHapus.disabled = false;
+      });
     });
-  });
-})();
+  })();
 </script>
 
 <?= $this->endSection() ?>
