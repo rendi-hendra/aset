@@ -17,6 +17,7 @@ class User extends BaseController
     public function index()
     {
         $users = $this->userModel->getUser()->findAll();
+        var_dump($users);
 
         return view('users/index', [
             'users' => $users,
@@ -29,7 +30,7 @@ class User extends BaseController
         $id          = $this->request->getPost('userid'); // bisa kosong
         $username    = strtolower(trim((string)$this->request->getPost('username')));
         $nama        = trim((string)$this->request->getPost('nama'));
-        $userlevelid = (int)($this->request->getPost('userlevelid') ?? 3);
+        $userlevelid = (int)($this->request->getPost('userlevelid') ?? 2);
         $passwordIn  = (string)($this->request->getPost('password') ?? '');
 
         if ($username === '' || $nama === '') {
@@ -37,7 +38,7 @@ class User extends BaseController
         }
 
         // Validasi userlevel yang diizinkan
-        $allowedLevels = [0, 1, 3, 99];
+        $allowedLevels = [0, 1, 2, 99];
         if (!in_array($userlevelid, $allowedLevels, true)) {
             $userlevelid = 3;
         }

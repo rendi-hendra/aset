@@ -32,17 +32,16 @@ class UserModel extends Model
 
     public function getUser()
     {
-        // NOTE: join "user" harus di-quote di PostgreSQL
-        return $this->select('u.userid, u.username, u.nama, u.userlevelid, u.isdeleted,
-                              u.createdby, u.createddate, u.updatedby, u.updateddate, u.deletedby, u.deleteddate,
-                              c.nama as createdby_name, up.nama as updatedby_name, d.nama as deletedby_name,
-                              ul.userlevel as userlevel_name')
-            ->from('"user" u')
-            ->join('"user" c', 'c.userid = u.createdby', 'left')
-            ->join('"user" up', 'up.userid = u.updatedby', 'left')
-            ->join('"user" d', 'd.userid = u.deletedby', 'left')
-            ->join('userlevel ul', 'ul.userlevelid = u.userlevelid', 'left')
-            ->where('u.isdeleted', 0)
-            ->orderBy('u.createddate', 'DESC');
+        return $this->select('user.userid, user.username, user.nama, user.isdeleted,
+                          user.createdby, user.createddate, user.updatedby, user.updateddate, 
+                          user.deletedby, user.deleteddate,
+                          c.nama as createdby_name, 
+                          up.nama as updatedby_name, 
+                          d.nama as deletedby_name')
+            ->join('"user" c', 'c.userid = "user".createdby', 'left')
+            ->join('"user" up', 'up.userid = "user".updatedby', 'left')
+            ->join('"user" d', 'd.userid = "user".deletedby', 'left')
+            ->where('user.isdeleted', 0)
+            ->orderBy('user.createddate', 'DESC');
     }
 }
