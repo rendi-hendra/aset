@@ -475,7 +475,7 @@ CREATE TABLE public.vendor (
     isdeleted integer NOT NULL,
     createdby bigint NOT NULL,
     createddate timestamp(0) without time zone NOT NULL,
-    updateby bigint,
+    updatedby bigint,
     updateddate timestamp(0) without time zone,
     deletedby bigint,
     deleteddate timestamp(0) without time zone
