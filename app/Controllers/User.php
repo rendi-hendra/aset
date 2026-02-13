@@ -17,7 +17,6 @@ class User extends BaseController
     public function index()
     {
         $users = $this->userModel->getUser()->findAll();
-        var_dump($users);
 
         return view('users/index', [
             'users' => $users,
