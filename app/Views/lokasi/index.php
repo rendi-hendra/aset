@@ -95,7 +95,7 @@
           <?php else: ?>
             <?php foreach ($lokasi as $r): ?>
               <?php
-                $statusText  = ((int)$r['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
+                $statusText  = ((int)$r['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
                 $createdDate = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
                 $dibuatOleh  = $r['createdby_name'] ?? '-';
                 $diubahOleh  = $r['updatedby_name'] ?? '-';

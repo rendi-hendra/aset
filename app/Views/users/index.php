@@ -107,7 +107,7 @@
           <?php else: ?>
             <?php foreach ($users as $u): ?>
               <?php
-              $statusText  = ((int)$u['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
+              $statusText  = ((int)$u['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
               $createdDate = !empty($u['createddate']) ? date('Y-m-d', strtotime($u['createddate'])) : '';
               $updatedDate = !empty($u['updateddate']) ? date('Y-m-d', strtotime($u['updateddate'])) : '';
               $deletedDate = !empty($u['deleteddate']) ? date('Y-m-d', strtotime($u['deleteddate'])) : '';

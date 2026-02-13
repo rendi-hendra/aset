@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict CE32pJvS0DOL3AE10jr6O8YCsQVwHG2CVd7Y4H5idziwVnQGhgzugVkdMC2ox9p
+\restrict scwoPS9QpRiHagDdQ9WszKZvKMv82VTLl7Dwf8N3TwTOlN0iQjEfkXtfLZgRJp7
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-02-12 16:25:17
+-- Started on 2026-02-13 15:40:18
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -475,7 +475,7 @@ CREATE TABLE public.vendor (
     isdeleted integer NOT NULL,
     createdby bigint NOT NULL,
     createddate timestamp(0) without time zone NOT NULL,
-    updateby bigint,
+    updatedby bigint,
     updateddate timestamp(0) without time zone,
     deletedby bigint,
     deleteddate timestamp(0) without time zone
@@ -591,6 +591,9 @@ COPY public.jenis (jenisid, jeniskode, jenis, isdeleted, createdby, createddate,
 --
 
 COPY public.lokasi (lokasiid, lokasikode, lokasi, isdeleted, createdby, createddate, updatedby, updateddate, deletedby, deleteddate) FROM stdin;
+1	1LT1	Gedung 1 LT 1	0	2	2026-02-12 10:08:12	\N	\N	\N	\N
+2	1LT2	Gedung 1 LT 2	0	2	2026-02-12 10:08:46	\N	\N	\N	\N
+3	1LT3	Gedung 1 LT 3	0	2	2026-02-12 10:09:07	\N	\N	\N	\N
 \.
 
 
@@ -601,7 +604,8 @@ COPY public.lokasi (lokasiid, lokasikode, lokasi, isdeleted, createdby, createdd
 --
 
 COPY public.merk (merkid, merk, isdeleted, createdby, createddate, updatedby, updateddate, deletedby, deleteddate) FROM stdin;
-1	Maspion	1	2	2026-02-12 05:31:11	\N	\N	2	2026-02-12 05:32:11
+2	Panasonic	0	2	2026-02-12 10:37:56	\N	\N	\N	\N
+1	Maspion	0	2	2026-02-12 05:31:11	2	2026-02-12 10:43:49	\N	\N
 \.
 
 
@@ -641,7 +645,8 @@ COPY public.syssetting (syssettingid, variable, value) FROM stdin;
 --
 
 COPY public."user" (userid, username, nama, isdeleted, createdby, createddate, updatedby, updateddate, deletedby, deleteddate, password, userlevelid) FROM stdin;
-2	admin	Administrator	0	2	2026-02-12 12:20:45.992391	\N	\N	\N	\N	$2y$10$1got09WAEQzhWJp/DtPH3uycuehDnIRcwKnTLgBqylT9wH4FAGfBu	\N
+2	admin	admin1	0	2	2026-02-12 12:20:45.992391	2	2026-02-12 11:00:37	\N	\N	$2y$10$t4Qh3x0fb356qfIEYoYM8uzYiVkNqwOtXM34hr38zXWnLYyBnAgqi	1
+3	admin1	fafa	0	2	2026-02-12 11:01:52	\N	\N	\N	\N	$2y$10$nzEVZCTJLh1S5cbb48s2DesV.d/mt8NbrnFdCSRdKoUUHwHCCcib.	0
 \.
 
 
@@ -652,6 +657,10 @@ COPY public."user" (userid, username, nama, isdeleted, createdby, createddate, u
 --
 
 COPY public.userlevel (userlevelid, userlevel) FROM stdin;
+0	Superadmin
+1	Admin
+3	User
+99	Guest
 \.
 
 
@@ -661,7 +670,7 @@ COPY public.userlevel (userlevelid, userlevel) FROM stdin;
 -- Data for Name: vendor; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.vendor (vendorid, vendor, alamat, isdeleted, createdby, createddate, updateby, updateddate, deletedby, deleteddate) FROM stdin;
+COPY public.vendor (vendorid, vendor, alamat, isdeleted, createdby, createddate, updatedby, updateddate, deletedby, deleteddate) FROM stdin;
 \.
 
 
@@ -698,7 +707,7 @@ SELECT pg_catalog.setval('public.jenis_jenisid_seq', 1, false);
 -- Name: lokasi_lokasiid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.lokasi_lokasiid_seq', 1, false);
+SELECT pg_catalog.setval('public.lokasi_lokasiid_seq', 3, true);
 
 
 --
@@ -707,7 +716,7 @@ SELECT pg_catalog.setval('public.lokasi_lokasiid_seq', 1, false);
 -- Name: merk_merkid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.merk_merkid_seq', 1, true);
+SELECT pg_catalog.setval('public.merk_merkid_seq', 2, true);
 
 
 --
@@ -716,7 +725,7 @@ SELECT pg_catalog.setval('public.merk_merkid_seq', 1, true);
 -- Name: user_userid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_userid_seq', 2, true);
+SELECT pg_catalog.setval('public.user_userid_seq', 3, true);
 
 
 --
@@ -1164,14 +1173,14 @@ ALTER TABLE ONLY public.vendor
 --
 
 ALTER TABLE ONLY public.vendor
-    ADD CONSTRAINT vendor_updateby_foreign FOREIGN KEY (updateby) REFERENCES public."user"(userid);
+    ADD CONSTRAINT vendor_updateby_foreign FOREIGN KEY (updatedby) REFERENCES public."user"(userid);
 
 
--- Completed on 2026-02-12 16:25:18
+-- Completed on 2026-02-13 15:40:19
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict CE32pJvS0DOL3AE10jr6O8YCsQVwHG2CVd7Y4H5idziwVnQGhgzugVkdMC2ox9p
+\unrestrict scwoPS9QpRiHagDdQ9WszKZvKMv82VTLl7Dwf8N3TwTOlN0iQjEfkXtfLZgRJp7
 

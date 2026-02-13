@@ -41,6 +41,22 @@
         </a>
     </li>
 
+    <!-- Jenis -->
+    <li class="nav-item <?= ($uri->getSegment(1) == 'jenis') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('jenis') ?>">
+            <i class="fas fa-list"></i>
+            <span>Jenis</span>
+        </a>
+    </li>
+    
+    <!-- Vendor -->
+    <li class="nav-item <?= ($uri->getSegment(1) == 'vendors') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('vendors') ?>">
+            <i class="fas fa-building"></i>
+            <span>Vendor</span>
+        </a>
+    </li>
+
     <hr class="sidebar-divider d-none d-md-block">
 
     <div class="text-center d-none d-md-inline">

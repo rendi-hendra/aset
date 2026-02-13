@@ -31,7 +31,6 @@ class LokasiModel extends Model
             ->join('"user" c', 'c.userid = lokasi.createdby', 'left')
             ->join('"user" up', 'up.userid = lokasi.updatedby', 'left')
             ->join('"user" d', 'd.userid = lokasi.deletedby', 'left')
-            ->where('lokasi.isdeleted', 0)
             ->orderBy('lokasi.createddate', 'DESC');
     }
 }
