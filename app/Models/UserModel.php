@@ -41,7 +41,6 @@ class UserModel extends Model
             ->join('"user" c', 'c.userid = "user".createdby', 'left')
             ->join('"user" up', 'up.userid = "user".updatedby', 'left')
             ->join('"user" d', 'd.userid = "user".deletedby', 'left')
-            ->where('user.isdeleted', 0)
             ->orderBy('user.createddate', 'DESC');
     }
 }

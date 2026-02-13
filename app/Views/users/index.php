@@ -87,7 +87,7 @@
 
   <!-- TABLE -->
   <div class="card shadow-sm">
-    <div class="table-responsive">
+    <div class="card-body">
       <table class="table table-bordered mb-0" id="tblUser">
         <thead class="bg-light">
           <tr>
@@ -109,6 +109,8 @@
               <?php
               $statusText  = ((int)$u['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
               $createdDate = !empty($u['createddate']) ? date('Y-m-d', strtotime($u['createddate'])) : '';
+              $updatedDate = !empty($u['updateddate']) ? date('Y-m-d', strtotime($u['updateddate'])) : '';
+              $deletedDate = !empty($u['deleteddate']) ? date('Y-m-d', strtotime($u['deleteddate'])) : '';
               $dibuatOleh  = $u['createdby_name'] ?? '-';
               $diubahOleh  = $u['updatedby_name'] ?? '-';
               $dihapusOleh = $u['deletedby_name'] ?? '-';
@@ -117,13 +119,14 @@
                 data-id="<?= (int)$u['userid'] ?>"
                 data-username="<?= esc($u['username']) ?>"
                 data-nama="<?= esc($u['nama']) ?>"
-                data-userlevelid="<?= (int)($u['userlevelid'] ?? 3) ?>">
+                data-userlevelid="<?= (int)($u['userlevelid'] ?? 2) ?>"
+                data-status="<?= $statusText ?>">
                 <td><?= esc($u['username']) ?></td>
                 <td><?= esc($u['nama']) ?></td>
                 <td><?= esc($statusText) ?></td>
                 <td><?= esc($createdDate) ?> <?= esc($dibuatOleh) ?></td>
-                <td><?= esc($diubahOleh) ?></td>
-                <td><?= esc($dihapusOleh) ?></td>
+                <td><?= esc($updatedDate) ?> <?= esc($diubahOleh) ?></td>
+                <td><?= esc($deletedDate) ?> <?= esc($dihapusOleh) ?></td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>
@@ -161,50 +164,79 @@
 </style>
 
 <script>
-  (function() {
-    const btnDefault = document.getElementById('btnDefault');
+  $(document).ready(function() {
+
     const btnHapus = document.getElementById('btnHapus');
+    const btnDefault = document.getElementById('btnDefault');
 
     const userid = document.getElementById('userid');
     const username = document.getElementById('username');
     const password = document.getElementById('password');
     const nama = document.getElementById('nama');
     const userlevelid = document.getElementById('userlevelid');
-
     const del_userid = document.getElementById('del_userid');
+
+    // INIT DATATABLE
+    const table = $('#tblUser').DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 10,
+      order: [
+        [0, 'asc']
+      ],
+      language: {
+        search: "Cari:",
+        lengthMenu: "Tampilkan _MENU_ data",
+        info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "›",
+          previous: "‹"
+        }
+      }
+    });
 
     function resetFormDefault() {
       userid.value = '';
       username.value = '';
       password.value = '';
       nama.value = '';
-      userlevelid.value = '2'; // default: User
+      userlevelid.value = '2';
       del_userid.value = '';
       btnHapus.disabled = true;
 
-      document.querySelectorAll('#tblUser tbody tr').forEach(tr => tr.classList.remove('table-active'));
+      $('#tblUser tbody tr').removeClass('table-active');
     }
 
     btnDefault.addEventListener('click', resetFormDefault);
 
-    document.querySelectorAll('.row-user').forEach(tr => {
-      tr.addEventListener('click', () => {
-        document.querySelectorAll('#tblUser tbody tr').forEach(x => x.classList.remove('table-active'));
-        tr.classList.add('table-active');
+    // CLICK ROW (WAJIB pakai on() karena DataTables redraw DOM)
+    $('#tblUser tbody').on('click', 'tr', function() {
 
-        userid.value = tr.dataset.id;
-        username.value = tr.dataset.username;
-        nama.value = tr.dataset.nama;
-        userlevelid.value = tr.dataset.userlevelid || '2';
+      $('#tblUser tbody tr').removeClass('table-active');
+      $(this).addClass('table-active');
 
-        // password jangan auto isi (demi keamanan)
-        password.value = '';
+      const row = $(this);
 
-        del_userid.value = tr.dataset.id;
+      userid.value = row.data('id');
+      username.value = row.data('username');
+      nama.value = row.data('nama');
+      userlevelid.value = row.data('userlevelid') || '2';
+      password.value = '';
+
+      del_userid.value = row.data('id');
+
+      if (row.data('status') === 'TIDAK AKTIF') {
+        btnHapus.disabled = true;
+      } else {
         btnHapus.disabled = false;
-      });
+      }
+
     });
-  })();
+
+  });
 </script>
+
 
 <?= $this->endSection() ?>
