@@ -5,14 +5,14 @@
 
   <!-- HEADER -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="font-weight-bold text-gray-800 m-0">JENIS ASET</h4>
+    <h4 class="font-weight-bold text-gray-800 m-0">VENDOR</h4>
 
     <div class="d-flex" style="gap:10px;">
       <button type="button" class="btn btn-outline-primary btn-sm" id="btnBaru">
         <i class="fas fa-plus mr-1"></i> BARU
       </button>
 
-      <button type="submit" form="formJenis" class="btn btn-primary btn-sm">
+      <button type="submit" form="formVendor" class="btn btn-primary btn-sm">
         <i class="fas fa-save mr-1"></i> SIMPAN
       </button>
 
@@ -37,22 +37,24 @@
       <div class="card shadow-sm">
         <div class="card-body">
 
-          <form id="formJenis" method="post" action="<?= base_url('jenis/save') ?>">
+          <form id="formVendor" method="post" action="<?= base_url('vendors/save') ?>">
             <?= csrf_field() ?>
 
-            <input type="hidden" name="jenisid" id="jenisid">
+            <input type="hidden" name="vendorid" id="vendorid">
 
             <div class="form-group">
-              <label>Kode</label>
-              <input type="text" name="kode" id="kode" maxlength="10"
+              <label>Nama Vendor</label>
+              <input type="text" name="vendor" id="vendor"
+                maxlength="100"
                 class="form-control" required>
             </div>
 
             <div class="form-group mb-0">
-              <label>Jenis Aset</label>
-              <input type="text" name="jenis_aset" id="jenis_aset"
-                maxlength="50"
-                class="form-control" required>
+              <label>Alamat</label>
+              <textarea name="alamat" id="alamat"
+                maxlength="300"
+                class="form-control"
+                rows="3"></textarea>
             </div>
 
           </form>
@@ -65,11 +67,11 @@
   <!-- TABLE -->
   <div class="card shadow-sm">
     <div class="table-responsive">
-      <table class="table table-bordered table-hover mb-0" id="tblJenis">
+      <table class="table table-bordered table-hover mb-0" id="tblVendor">
         <thead class="bg-light">
           <tr>
-            <th style="width:100px;">Kode</th>
-            <th>Jenis Aset</th>
+            <th>Vendor</th>
+            <th>Alamat</th>
             <th style="width:120px;">Status</th>
             <th style="width:180px;">Dibuat Oleh</th>
             <th style="width:180px;">Diubah Oleh</th>
@@ -77,41 +79,43 @@
           </tr>
         </thead>
         <tbody>
-          <?php if (empty($jenis)): ?>
+        <tbody>
+          <?php if (empty($vendor)): ?>
             <tr>
               <td colspan="6" class="text-center text-muted">Belum ada data.</td>
             </tr>
           <?php else: ?>
-            <?php foreach ($jenis as $j): ?>
+            <?php foreach ($vendor as $v): ?>
               <?php
-              $statusText  = ((int)$j['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
-              $createdDate = !empty($j['createddate']) ? date('Y-m-d', strtotime($j['createddate'])) : '';
-              $dibuatOleh  = $j['createdby_name'] ?? '-';
-              $diubahOleh  = $j['updatedby_name'] ?? '-';
-              $dihapusOleh = $j['deletedby_name'] ?? '-';
+              $statusText  = ((int)$v['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
+              $createdDate = !empty($v['createddate'])
+                ? date('Y-m-d', strtotime($v['createddate']))
+                : '';
               ?>
-              <tr class="row-jenis"
-                data-id="<?= $j['jenisid'] ?>"
-                data-kode="<?= esc($j['jeniskode']) ?>"
-                data-jenis="<?= esc($j['jenis']) ?>">
-                <td><?= esc($j['jeniskode']) ?></td>
-                <td><?= esc($j['jenis']) ?></td>
+              <tr class="row-vendor"
+                data-id="<?= $v['vendorid'] ?>"
+                data-vendor="<?= esc($v['vendor']) ?>"
+                data-alamat="<?= esc($v['alamat']) ?>">
+
+                <td><?= esc($v['vendor']) ?></td>
+                <td><?= esc($v['alamat']) ?></td>
                 <td><?= esc($statusText) ?></td>
-                <td><?= esc($createdDate) ?> <?= esc($dibuatOleh) ?></td>
-                <td><?= esc($diubahOleh) ?></td>
-                <td><?= esc($dihapusOleh) ?></td>
+                <td><?= esc($createdDate) ?> <?= esc($v['createdby_name'] ?? '-') ?></td>
+                <td><?= esc($v['updatedby_name'] ?? '-') ?></td>
+                <td><?= esc($v['deletedby_name'] ?? '-') ?></td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>
+        </tbody>
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- DELETE FORM -->
-  <form id="formDelete" method="post" action="<?= base_url('jenis/delete') ?>">
+  <form id="formDelete" method="post" action="<?= base_url('vendors/delete') ?>">
     <?= csrf_field() ?>
-    <input type="hidden" name="jenisid" id="del_jenisid">
+    <input type="hidden" name="vendorid" id="del_vendorid">
   </form>
 
 </div>
@@ -121,35 +125,35 @@
     const btnBaru = document.getElementById('btnBaru');
     const btnHapus = document.getElementById('btnHapus');
 
-    const jenisid = document.getElementById('jenisid');
-    const kode = document.getElementById('kode');
-    const jenis = document.getElementById('jenis_aset');
-    const del_id = document.getElementById('del_jenisid');
+    const vendorid = document.getElementById('vendorid');
+    const vendor = document.getElementById('vendor');
+    const alamat = document.getElementById('alamat');
+    const del_id = document.getElementById('del_vendorid');
 
     function resetForm() {
-      jenisid.value = '';
-      kode.value = '';
-      jenis.value = '';
+      vendorid.value = '';
+      vendor.value = '';
+      alamat.value = '';
       del_id.value = '';
       btnHapus.disabled = true;
 
-      document.querySelectorAll('#tblJenis tbody tr')
+      document.querySelectorAll('#tblVendor tbody tr')
         .forEach(tr => tr.classList.remove('table-active'));
     }
 
     btnBaru.addEventListener('click', resetForm);
 
-    document.querySelectorAll('.row-jenis').forEach(tr => {
+    document.querySelectorAll('.row-vendor').forEach(tr => {
       tr.addEventListener('click', () => {
 
-        document.querySelectorAll('#tblJenis tbody tr')
+        document.querySelectorAll('#tblVendor tbody tr')
           .forEach(x => x.classList.remove('table-active'));
 
         tr.classList.add('table-active');
 
-        jenisid.value = tr.dataset.id;
-        kode.value = tr.dataset.kode;
-        jenis.value = tr.dataset.jenis;
+        vendorid.value = tr.dataset.id;
+        vendor.value = tr.dataset.vendor;
+        alamat.value = tr.dataset.alamat;
 
         del_id.value = tr.dataset.id;
         btnHapus.disabled = false;

@@ -65,4 +65,10 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
         $routes->post('save', 'Jenis::save');
         $routes->post('delete', 'Jenis::delete');
     });
+
+    $routes->group('vendors', ['filter' => 'auth'], function ($routes) {
+        $routes->get('/', 'Vendors::index');
+        $routes->post('save', 'Vendors::save');
+        $routes->post('delete', 'Vendors::delete');
+    });
 });

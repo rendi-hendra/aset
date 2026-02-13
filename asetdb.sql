@@ -210,7 +210,7 @@ ALTER SEQUENCE public.asetmove_asetmoveid_seq OWNED BY public.asetmove.asetmovei
 --
 
 CREATE TABLE public.asetservice (
-    asetserviceid bigint NOT NULL,
+    asetserviceid bigserial NOT NULL,
     asetid bigint NOT NULL,
     vendorid bigint NOT NULL,
     asetserviceno character varying(20) NOT NULL,
@@ -469,7 +469,7 @@ ALTER TABLE public.userlevel OWNER TO postgres;
 --
 
 CREATE TABLE public.vendor (
-    vendorid bigint NOT NULL,
+    vendorid bigserial NOT NULL,
     vendor character varying(100) NOT NULL,
     alamat character varying(300) NOT NULL,
     isdeleted integer NOT NULL,

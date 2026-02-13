@@ -48,6 +48,14 @@
             <span>Jenis</span>
         </a>
     </li>
+    
+    <!-- Vendor -->
+    <li class="nav-item <?= ($uri->getSegment(1) == 'vendors') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('vendors') ?>">
+            <i class="fas fa-building"></i>
+            <span>Vendor</span>
+        </a>
+    </li>
 
     <hr class="sidebar-divider d-none d-md-block">
 
