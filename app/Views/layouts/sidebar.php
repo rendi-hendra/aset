@@ -1,4 +1,6 @@
-<?php $uri = service('uri'); ?>
+<?php $uri = service('uri');
+// var_dump($_SESSION);
+?>
 
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -48,7 +50,7 @@
             <span>Jenis</span>
         </a>
     </li>
-    
+
     <!-- Vendor -->
     <li class="nav-item <?= ($uri->getSegment(1) == 'vendors') ? 'active' : '' ?>">
         <a class="nav-link" href="<?= base_url('vendors') ?>">

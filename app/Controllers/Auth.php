@@ -19,6 +19,7 @@ class Auth extends BaseController
     {
         $session = session();
         $model   = new UserModel();
+        var_dump($model->first());
 
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');

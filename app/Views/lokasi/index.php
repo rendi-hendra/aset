@@ -44,23 +44,23 @@
             <div class="form-group">
               <label class="mb-1">Kode</label>
               <input type="text"
-                     class="form-control"
-                     name="lokasikode"
-                     id="lokasikode"
-                     maxlength="5"
-                     placeholder="Contoh: 1LT1"
-                     required>
+                class="form-control"
+                name="lokasikode"
+                id="lokasikode"
+                maxlength="5"
+                placeholder="Contoh: 1LT1"
+                required>
             </div>
 
             <div class="form-group">
               <label class="mb-1">Lokasi</label>
               <input type="text"
-                     class="form-control"
-                     name="lokasi"
-                     id="lokasi"
-                     maxlength="20"
-                     placeholder="Contoh: Gedung 1 Lt1"
-                     required>
+                class="form-control"
+                name="lokasi"
+                id="lokasi"
+                maxlength="20"
+                placeholder="Contoh: Gedung 1 Lt1"
+                required>
             </div>
 
             <small class="text-muted">
@@ -75,8 +75,8 @@
 
   <!-- TABLE -->
   <div class="card shadow-sm">
-    <div class="table-responsive">
-      <table class="table table-bordered mb-0" id="tblLokasi">
+    <div class="card-body">
+      <table class="table table-bordered table-striped" id="tblLokasi" width="100%">
         <thead class="bg-light">
           <tr>
             <th style="width:100px;">Kode</th>
@@ -95,16 +95,16 @@
           <?php else: ?>
             <?php foreach ($lokasi as $r): ?>
               <?php
-                $statusText  = ((int)$r['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
-                $createdDate = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
-                $dibuatOleh  = $r['createdby_name'] ?? '-';
-                $diubahOleh  = $r['updatedby_name'] ?? '-';
-                $dihapusOleh = $r['deletedby_name'] ?? '-';
+              $statusText  = ((int)$r['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
+              $createdDate = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
+              $dibuatOleh  = $r['createdby_name'] ?? '-';
+              $diubahOleh  = $r['updatedby_name'] ?? '-';
+              $dihapusOleh = $r['deletedby_name'] ?? '-';
               ?>
               <tr class="row-lokasi"
-                  data-id="<?= (int)$r['lokasiid'] ?>"
-                  data-kode="<?= esc($r['lokasikode']) ?>"
-                  data-lokasi="<?= esc($r['lokasi']) ?>">
+                data-id="<?= (int)$r['lokasiid'] ?>"
+                data-kode="<?= esc($r['lokasikode']) ?>"
+                data-lokasi="<?= esc($r['lokasi']) ?>">
                 <td><?= esc($r['lokasikode']) ?></td>
                 <td><?= esc($r['lokasi']) ?></td>
                 <td><?= esc($statusText) ?></td>
@@ -129,51 +129,93 @@
 
 <!-- PAGE STYLE (LOCAL ONLY) -->
 <style>
-  #tblLokasi { table-layout: fixed; width: 100%; }
-  #tblLokasi td, #tblLokasi th { vertical-align: middle; }
-  #tblLokasi td { word-wrap: break-word; white-space: normal; }
-  #tblLokasi tbody tr { cursor: pointer; }
-  #tblLokasi tbody tr:hover { background: #f8f9fc; }
+  #tblLokasi {
+    width: 100%;
+  }
+
+  #tblLokasi td,
+  #tblLokasi th {
+    vertical-align: middle;
+  }
+
+  #tblLokasi td {
+    word-wrap: break-word;
+    white-space: normal;
+  }
+
+  #tblLokasi tbody tr {
+    cursor: pointer;
+  }
+
+  #tblLokasi tbody tr:hover {
+    background: #f8f9fc;
+  }
 </style>
 
 <!-- PAGE SCRIPT -->
 <script>
-(function(){
-  const btnBaru  = document.getElementById('btnBaru');
-  const btnHapus = document.getElementById('btnHapus');
+  $(document).ready(function() {
 
-  const lokasiid   = document.getElementById('lokasiid');
-  const lokasikode = document.getElementById('lokasikode');
-  const lokasi     = document.getElementById('lokasi');
+    const btnBaru = document.getElementById('btnBaru');
+    const btnHapus = document.getElementById('btnHapus');
 
-  const del_lokasiid = document.getElementById('del_lokasiid');
+    const lokasiid = document.getElementById('lokasiid');
+    const lokasikode = document.getElementById('lokasikode');
+    const lokasi = document.getElementById('lokasi');
+    const del_lokasiid = document.getElementById('del_lokasiid');
 
-  function resetForm(){
-    lokasiid.value = '';
-    lokasikode.value = '';
-    lokasi.value = '';
-    del_lokasiid.value = '';
-    btnHapus.disabled = true;
-
-    document.querySelectorAll('#tblLokasi tbody tr').forEach(tr => tr.classList.remove('table-active'));
-  }
-
-  btnBaru.addEventListener('click', resetForm);
-
-  document.querySelectorAll('.row-lokasi').forEach(tr => {
-    tr.addEventListener('click', () => {
-      document.querySelectorAll('#tblLokasi tbody tr').forEach(x => x.classList.remove('table-active'));
-      tr.classList.add('table-active');
-
-      lokasiid.value   = tr.dataset.id;
-      lokasikode.value = tr.dataset.kode;
-      lokasi.value     = tr.dataset.lokasi;
-
-      del_lokasiid.value = tr.dataset.id;
-      btnHapus.disabled = false;
+    // INIT DATATABLE
+    const table = $('#tblLokasi').DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 10,
+      order: [
+        [0, 'asc']
+      ],
+      language: {
+        search: "Cari:",
+        lengthMenu: "Tampilkan _MENU_ data",
+        info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "›",
+          previous: "‹"
+        }
+      }
     });
+
+    function resetForm() {
+      lokasiid.value = '';
+      lokasikode.value = '';
+      lokasi.value = '';
+      del_lokasiid.value = '';
+      btnHapus.disabled = true;
+
+      $('#tblLokasi tbody tr').removeClass('table-active');
+    }
+
+    btnBaru.addEventListener('click', resetForm);
+
+    // IMPORTANT: pakai on() karena DataTables redraw DOM
+    $('#tblLokasi tbody').on('click', 'tr', function() {
+
+      $('#tblLokasi tbody tr').removeClass('table-active');
+      $(this).addClass('table-active');
+
+      const row = $(this);
+
+      lokasiid.value = row.data('id');
+      lokasikode.value = row.data('kode');
+      lokasi.value = row.data('lokasi');
+
+      del_lokasiid.value = row.data('id');
+      btnHapus.disabled = false;
+
+    });
+
   });
-})();
 </script>
+
 
 <?= $this->endSection() ?>

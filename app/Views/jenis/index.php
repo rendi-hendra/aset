@@ -64,8 +64,8 @@
 
   <!-- TABLE -->
   <div class="card shadow-sm">
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover mb-0" id="tblJenis">
+    <div class="card-body">
+      <table class="table table-bordered table-striped" id="tblJenis">
         <thead class="bg-light">
           <tr>
             <th style="width:100px;">Kode</th>
@@ -117,7 +117,8 @@
 </div>
 
 <script>
-  (function() {
+  $(document).ready(function() {
+
     const btnBaru = document.getElementById('btnBaru');
     const btnHapus = document.getElementById('btnHapus');
 
@@ -126,6 +127,27 @@
     const jenis = document.getElementById('jenis_aset');
     const del_id = document.getElementById('del_jenisid');
 
+    // INIT DATATABLE
+    const table = $('#tblJenis').DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 10,
+      order: [
+        [0, 'asc']
+      ],
+      language: {
+        search: "Cari:",
+        lengthMenu: "Tampilkan _MENU_ data",
+        info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "›",
+          previous: "‹"
+        }
+      }
+    });
+
     function resetForm() {
       jenisid.value = '';
       kode.value = '';
@@ -133,29 +155,30 @@
       del_id.value = '';
       btnHapus.disabled = true;
 
-      document.querySelectorAll('#tblJenis tbody tr')
-        .forEach(tr => tr.classList.remove('table-active'));
+      $('#tblJenis tbody tr').removeClass('table-active');
     }
 
     btnBaru.addEventListener('click', resetForm);
 
-    document.querySelectorAll('.row-jenis').forEach(tr => {
-      tr.addEventListener('click', () => {
+    // WAJIB pakai on() karena DataTables redraw DOM
+    $('#tblJenis tbody').on('click', 'tr', function() {
 
-        document.querySelectorAll('#tblJenis tbody tr')
-          .forEach(x => x.classList.remove('table-active'));
+      $('#tblJenis tbody tr').removeClass('table-active');
+      $(this).addClass('table-active');
 
-        tr.classList.add('table-active');
+      const row = $(this);
 
-        jenisid.value = tr.dataset.id;
-        kode.value = tr.dataset.kode;
-        jenis.value = tr.dataset.jenis;
+      jenisid.value = row.data('id');
+      kode.value = row.data('kode');
+      jenis.value = row.data('jenis');
 
-        del_id.value = tr.dataset.id;
-        btnHapus.disabled = false;
-      });
+      del_id.value = row.data('id');
+      btnHapus.disabled = false;
+
     });
-  })();
+
+  });
 </script>
+
 
 <?= $this->endSection() ?>

@@ -32,7 +32,7 @@
 
   <!-- FORM -->
   <div class="row mb-4">
-    <div class="col-lg-6 col-md-8">
+    <div class="col-lg-10 col-md-12">
       <div class="card shadow-sm">
         <div class="card-body">
 
@@ -44,12 +44,12 @@
             <div class="form-group mb-0">
               <label class="mb-1">Merk</label>
               <input type="text"
-                     class="form-control"
-                     name="merk"
-                     id="merk"
-                     maxlength="20"
-                     placeholder="Contoh: Panasonic"
-                     required>
+                class="form-control"
+                name="merk"
+                id="merk"
+                maxlength="20"
+                placeholder="Contoh: Panasonic"
+                required>
             </div>
 
             <small class="text-muted d-block mt-2">
@@ -64,7 +64,7 @@
 
   <!-- TABLE -->
   <div class="card shadow-sm">
-    <div class="table-responsive">
+    <div class="card-body">
       <table class="table table-bordered mb-0" id="tblMerk">
         <thead class="bg-light">
           <tr>
@@ -83,15 +83,15 @@
           <?php else: ?>
             <?php foreach ($merk as $m): ?>
               <?php
-                $statusText  = ((int)$m['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
-                $createdDate = !empty($m['createddate']) ? date('Y-m-d', strtotime($m['createddate'])) : '';
-                $dibuatOleh  = $m['createdby_name'] ?? '-';
-                $diubahOleh  = $m['updatedby_name'] ?? '-';
-                $dihapusOleh = $m['deletedby_name'] ?? '-';
+              $statusText  = ((int)$m['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
+              $createdDate = !empty($m['createddate']) ? date('Y-m-d', strtotime($m['createddate'])) : '';
+              $dibuatOleh  = $m['createdby_name'] ?? '-';
+              $diubahOleh  = $m['updatedby_name'] ?? '-';
+              $dihapusOleh = $m['deletedby_name'] ?? '-';
               ?>
               <tr class="row-merk"
-                  data-id="<?= (int)$m['merkid'] ?>"
-                  data-merk="<?= esc($m['merk']) ?>">
+                data-id="<?= (int)$m['merkid'] ?>"
+                data-merk="<?= esc($m['merk']) ?>">
                 <td><?= esc($m['merk']) ?></td>
                 <td><?= esc($statusText) ?></td>
                 <td><?= esc($createdDate) ?> <?= esc($dibuatOleh) ?></td>
@@ -114,13 +114,88 @@
 </div>
 
 <style>
-  #tblMerk { table-layout: fixed; width: 100%; }
-  #tblMerk td, #tblMerk th { vertical-align: middle; }
-  #tblMerk tbody tr { cursor: pointer; }
-  #tblMerk tbody tr:hover { background: #f8f9fc; }
+  #tblMerk {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  #tblMerk td,
+  #tblMerk th {
+    vertical-align: middle;
+  }
+
+  #tblMerk tbody tr {
+    cursor: pointer;
+  }
+
+  #tblMerk tbody tr:hover {
+    background: #f8f9fc;
+  }
 </style>
 
 <script>
+  $(document).ready(function() {
+
+    const btnBaru = document.getElementById('btnBaru');
+    const btnHapus = document.getElementById('btnHapus');
+
+    const merkid = document.getElementById('merkid');
+    const merk = document.getElementById('merk');
+    const del_merkid = document.getElementById('del_merkid');
+
+    // INIT DATATABLE
+    const table = $('#tblMerk').DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 10,
+      order: [
+        [0, 'asc']
+      ],
+      language: {
+        search: "Cari:",
+        lengthMenu: "Tampilkan _MENU_ data",
+        info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "›",
+          previous: "‹"
+        }
+      }
+    });
+
+    function resetForm() {
+      merkid.value = '';
+      merk.value = '';
+      del_merkid.value = '';
+      btnHapus.disabled = true;
+
+      $('#tblMerk tbody tr').removeClass('table-active');
+    }
+
+    btnBaru.addEventListener('click', resetForm);
+
+    // WAJIB pakai on() karena DataTables redraw
+    $('#tblMerk tbody').on('click', 'tr', function() {
+
+      $('#tblMerk tbody tr').removeClass('table-active');
+      $(this).addClass('table-active');
+
+      const row = $(this);
+
+      merkid.value = row.data('id');
+      merk.value = row.data('merk');
+
+      del_merkid.value = row.data('id');
+      btnHapus.disabled = false;
+
+    });
+
+  });
+</script>
+
+
+<!-- <script>
 (function(){
   const btnBaru  = document.getElementById('btnBaru');
   const btnHapus = document.getElementById('btnHapus');
@@ -154,6 +229,6 @@
     });
   });
 })();
-</script>
+</script> -->
 
 <?= $this->endSection() ?>

@@ -66,7 +66,7 @@
 
   <!-- TABLE -->
   <div class="card shadow-sm">
-    <div class="table-responsive">
+    <div class="card-body">
       <table class="table table-bordered table-hover mb-0" id="tblVendor">
         <thead class="bg-light">
           <tr>
@@ -78,7 +78,6 @@
             <th style="width:180px;">Dihapus Oleh</th>
           </tr>
         </thead>
-        <tbody>
         <tbody>
           <?php if (empty($vendor)): ?>
             <tr>
@@ -107,7 +106,6 @@
             <?php endforeach; ?>
           <?php endif; ?>
         </tbody>
-        </tbody>
       </table>
     </div>
   </div>
@@ -121,7 +119,8 @@
 </div>
 
 <script>
-  (function() {
+  $(document).ready(function() {
+
     const btnBaru = document.getElementById('btnBaru');
     const btnHapus = document.getElementById('btnHapus');
 
@@ -130,6 +129,27 @@
     const alamat = document.getElementById('alamat');
     const del_id = document.getElementById('del_vendorid');
 
+    // INIT DATATABLE
+    const table = $('#tblVendor').DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 10,
+      order: [
+        [0, 'asc']
+      ],
+      language: {
+        search: "Cari:",
+        lengthMenu: "Tampilkan _MENU_ data",
+        info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "›",
+          previous: "‹"
+        }
+      }
+    });
+
     function resetForm() {
       vendorid.value = '';
       vendor.value = '';
@@ -137,29 +157,30 @@
       del_id.value = '';
       btnHapus.disabled = true;
 
-      document.querySelectorAll('#tblVendor tbody tr')
-        .forEach(tr => tr.classList.remove('table-active'));
+      $('#tblVendor tbody tr').removeClass('table-active');
     }
 
     btnBaru.addEventListener('click', resetForm);
 
-    document.querySelectorAll('.row-vendor').forEach(tr => {
-      tr.addEventListener('click', () => {
+    // WAJIB pakai on() karena DataTables redraw DOM
+    $('#tblVendor tbody').on('click', 'tr', function() {
 
-        document.querySelectorAll('#tblVendor tbody tr')
-          .forEach(x => x.classList.remove('table-active'));
+      $('#tblVendor tbody tr').removeClass('table-active');
+      $(this).addClass('table-active');
 
-        tr.classList.add('table-active');
+      const row = $(this);
 
-        vendorid.value = tr.dataset.id;
-        vendor.value = tr.dataset.vendor;
-        alamat.value = tr.dataset.alamat;
+      vendorid.value = row.data('id');
+      vendor.value = row.data('vendor');
+      alamat.value = row.data('alamat');
 
-        del_id.value = tr.dataset.id;
-        btnHapus.disabled = false;
-      });
+      del_id.value = row.data('id');
+      btnHapus.disabled = false;
+
     });
-  })();
+
+  });
 </script>
+
 
 <?= $this->endSection() ?>
