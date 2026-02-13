@@ -93,6 +93,7 @@
             <div class="col-xl-5 col-lg-6 col-md-8">
 
                 <div class="login-card">
+                    
                     <!-- ICON -->
                     <div class="login-icon-wrapper">
                         <i class="fas fa-user-shield"></i>

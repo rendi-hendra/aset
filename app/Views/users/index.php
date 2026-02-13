@@ -67,7 +67,7 @@
                   <select class="form-control" name="userlevelid" id="userlevelid">
                     <option value="0">Superadmin</option>
                     <option value="1">Admin</option>
-                    <option value="3" selected>User</option>
+                    <option value="2" selected>User</option>
                     <option value="99">Guest</option>
                   </select>
                 </div>
