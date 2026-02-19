@@ -60,6 +60,7 @@ class AsetServiceModel extends Model
             ->join('"user" uc', 'uc.userid = s.createdby', 'left')
             ->join('"user" uu', 'uu.userid = s.updateby', 'left')
             ->join('"user" ud', 'ud.userid = s.deletedby', 'left')
+            ->where('COALESCE(s.isdeleted,0)', 0)
             ->orderBy('s.asetserviceid', 'DESC')
             ->get()
             ->getResultArray();
