@@ -217,7 +217,6 @@
     width: 100%;
   }
 </style>
-<?= $this->endSection() ?>
 
 <script>
   $(document).ready(function() {
@@ -293,3 +292,5 @@
 
   });
 </script>
+
+<?= $this->endSection() ?>
