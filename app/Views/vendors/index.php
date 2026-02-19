@@ -46,7 +46,7 @@
               <label>Nama Vendor</label>
               <input type="text" name="vendor" id="vendor"
                 maxlength="100"
-                class="form-control" required>
+                class="form-control" placeholder="Contoh : SOLINDO" required>
             </div>
 
             <div class="form-group mb-0">
@@ -54,7 +54,7 @@
               <textarea name="alamat" id="alamat"
                 maxlength="300"
                 class="form-control"
-                rows="3"></textarea>
+                rows="3" placeholder="Contoh : Perak Surabaya"></textarea>
             </div>
 
           </form>
