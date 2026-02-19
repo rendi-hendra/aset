@@ -50,7 +50,7 @@
                   <?php if (!empty($asetList)): ?>
                     <?php foreach ($asetList as $a): ?>
                       <?php
-                        $label = trim(($a['asetkode'] ?? '') . ' - ' . ($a['jenis'] ?? '') . ' - ' . ($a['merk'] ?? ''));
+                      $label = trim(($a['asetkode'] ?? '') . ' - ' . ($a['jenis'] ?? '') . ' - ' . ($a['merk'] ?? ''));
                       ?>
                       <option value="<?= (int)$a['asetid'] ?>"><?= esc($label) ?></option>
                     <?php endforeach; ?>
@@ -152,10 +152,10 @@
             <?php else: ?>
               <?php foreach ($service as $r): ?>
                 <?php
-                  $statusText  = ((int)$r['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
-                  $tglSvc      = !empty($r['asetservicedate']) ? date('Y-m-d', strtotime($r['asetservicedate'])) : '';
-                  $createdDate = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
-                  $asetLabel   = trim(($r['asetkode'] ?? '') . ' - ' . ($r['jenis'] ?? '') . ' - ' . ($r['merk'] ?? ''));
+                $statusText  = ((int)$r['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
+                $tglSvc      = !empty($r['asetservicedate']) ? date('Y-m-d', strtotime($r['asetservicedate'])) : '';
+                $createdDate = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
+                $asetLabel   = trim(($r['asetkode'] ?? '') . ' - ' . ($r['jenis'] ?? '') . ' - ' . ($r['merk'] ?? ''));
                 ?>
 
                 <tr class="row-service"
@@ -165,8 +165,7 @@
                   data-asetservicedate="<?= esc($tglSvc) ?>"
                   data-asetserviceno="<?= esc($r['asetserviceno'] ?? '') ?>"
                   data-servicestatusid="<?= (int)($r['servicestatusid'] ?? 0) ?>"
-                  data-remarks="<?= esc($r['remarks'] ?? '') ?>"
-                >
+                  data-remarks="<?= esc($r['remarks'] ?? '') ?>">
                   <td class="text-nowrap"><?= esc($asetLabel) ?></td>
                   <td class="text-nowrap"><?= esc($r['vendor'] ?? '-') ?></td>
                   <td class="text-nowrap"><?= esc($tglSvc) ?></td>
@@ -196,29 +195,43 @@
 </div>
 
 <style>
-  #tblService { table-layout: auto; }
-  #tblService th, #tblService td {
+  #tblService {
+    table-layout: auto;
+  }
+
+  #tblService th,
+  #tblService td {
     white-space: nowrap;
     vertical-align: middle;
   }
-  #tblService tbody tr { cursor: pointer; }
-  #tblService tbody tr:hover { background: #f8f9fc; }
-  div.dataTables_wrapper { width: 100%; }
+
+  #tblService tbody tr {
+    cursor: pointer;
+  }
+
+  #tblService tbody tr:hover {
+    background: #f8f9fc;
+  }
+
+  div.dataTables_wrapper {
+    width: 100%;
+  }
 </style>
+<?= $this->endSection() ?>
 
 <script>
   $(document).ready(function() {
 
-    const btnBaru  = document.getElementById('btnBaru');
+    const btnBaru = document.getElementById('btnBaru');
     const btnHapus = document.getElementById('btnHapus');
 
-    const asetserviceid    = document.getElementById('asetserviceid');
-    const asetid           = document.getElementById('asetid');
-    const vendorid         = document.getElementById('vendorid');
-    const asetservicedate  = document.getElementById('asetservicedate');
-    const asetserviceno    = document.getElementById('asetserviceno');
-    const servicestatusid  = document.getElementById('servicestatusid');
-    const remarks          = document.getElementById('remarks');
+    const asetserviceid = document.getElementById('asetserviceid');
+    const asetid = document.getElementById('asetid');
+    const vendorid = document.getElementById('vendorid');
+    const asetservicedate = document.getElementById('asetservicedate');
+    const asetserviceno = document.getElementById('asetserviceno');
+    const servicestatusid = document.getElementById('servicestatusid');
+    const remarks = document.getElementById('remarks');
 
     const del_asetserviceid = document.getElementById('del_asetserviceid');
 
@@ -227,23 +240,30 @@
       responsive: false,
       autoWidth: false,
       pageLength: 10,
-      order: [[3, 'desc']], // No Service
+      order: [
+        [3, 'desc']
+      ], // No Service
       language: {
         search: "Cari:",
         lengthMenu: "Tampilkan _MENU_ data",
         info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-        paginate: { first: "Awal", last: "Akhir", next: "›", previous: "‹" }
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "›",
+          previous: "‹"
+        }
       }
     });
 
     function resetForm() {
-      asetserviceid.value   = '';
-      asetid.value          = '';
-      vendorid.value        = '';
+      asetserviceid.value = '';
+      asetid.value = '';
+      vendorid.value = '';
       asetservicedate.value = '';
-      asetserviceno.value   = '';
+      asetserviceno.value = '';
       servicestatusid.value = '';
-      remarks.value         = '';
+      remarks.value = '';
 
       del_asetserviceid.value = '';
       btnHapus.disabled = true;
@@ -259,13 +279,13 @@
 
       const row = $(this);
 
-      asetserviceid.value   = row.data('id') ?? '';
-      asetid.value          = row.data('asetid') ?? '';
-      vendorid.value        = row.data('vendorid') ?? '';
+      asetserviceid.value = row.data('id') ?? '';
+      asetid.value = row.data('asetid') ?? '';
+      vendorid.value = row.data('vendorid') ?? '';
       asetservicedate.value = row.data('asetservicedate') ?? '';
-      asetserviceno.value   = row.data('asetserviceno') ?? '';
+      asetserviceno.value = row.data('asetserviceno') ?? '';
       servicestatusid.value = row.data('servicestatusid') ?? '';
-      remarks.value         = row.data('remarks') ?? '';
+      remarks.value = row.data('remarks') ?? '';
 
       del_asetserviceid.value = row.data('id') ?? '';
       btnHapus.disabled = !del_asetserviceid.value;
@@ -273,5 +293,3 @@
 
   });
 </script>
-
-<?= $this->endSection() ?>
