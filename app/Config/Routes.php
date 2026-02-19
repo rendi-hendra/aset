@@ -40,7 +40,6 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
         $routes->post('delete', 'User::delete');
     });
 
-
     // =================================================
     // MERK
     // =================================================
@@ -49,7 +48,6 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
         $routes->post('save', 'Merk::save');
         $routes->post('delete', 'Merk::delete');
     });
-
 
     // =================================================
     // LOKASI
@@ -60,15 +58,30 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
         $routes->post('delete', 'Lokasi::delete');
     });
 
+    // =================================================
+    // JENIS
+    // =================================================
     $routes->group('jenis', ['filter' => 'auth'], function ($routes) {
         $routes->get('/', 'Jenis::index');
         $routes->post('save', 'Jenis::save');
         $routes->post('delete', 'Jenis::delete');
     });
 
+    // =================================================
+    // VENDORS
+    // =================================================
     $routes->group('vendors', ['filter' => 'auth'], function ($routes) {
         $routes->get('/', 'Vendors::index');
         $routes->post('save', 'Vendors::save');
         $routes->post('delete', 'Vendors::delete');
+    });
+
+    // =================================================
+    // ASET (BARU)
+    // =================================================
+    $routes->group('aset', function ($routes) {
+        $routes->get('/', 'Aset::index');
+        $routes->post('save', 'Aset::save');
+        $routes->post('delete', 'Aset::delete');
     });
 });

@@ -19,6 +19,14 @@
         </a>
     </li>
 
+    <!-- Aset (BARU) -->
+    <li class="nav-item <?= ($uri->getSegment(1) == 'aset') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('aset') ?>">
+            <i class="fas fa-box"></i>
+            <span>Aset</span>
+        </a>
+    </li>
+
     <!-- User -->
     <li class="nav-item <?= ($uri->getSegment(1) == 'users') ? 'active' : '' ?>">
         <a class="nav-link" href="<?= base_url('users') ?>">
