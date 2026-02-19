@@ -19,11 +19,19 @@
         </a>
     </li>
 
-    <!-- Aset (BARU) -->
+    <!-- Aset -->
     <li class="nav-item <?= ($uri->getSegment(1) == 'aset') ? 'active' : '' ?>">
         <a class="nav-link" href="<?= base_url('aset') ?>">
             <i class="fas fa-box"></i>
             <span>Aset</span>
+        </a>
+    </li>
+
+    <!-- Service (BARU) -->
+    <li class="nav-item <?= ($uri->getSegment(1) == 'service') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('service') ?>">
+            <i class="fas fa-tools"></i>
+            <span>Service</span>
         </a>
     </li>
 

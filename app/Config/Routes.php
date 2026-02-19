@@ -77,11 +77,20 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     });
 
     // =================================================
-    // ASET (BARU)
+    // ASET
     // =================================================
     $routes->group('aset', function ($routes) {
         $routes->get('/', 'Aset::index');
         $routes->post('save', 'Aset::save');
         $routes->post('delete', 'Aset::delete');
+    });
+
+    // =================================================
+    // SERVICE (BARU)
+    // =================================================
+    $routes->group('service', function ($routes) {
+        $routes->get('/', 'Service::index');
+        $routes->post('save', 'Service::save');
+        $routes->post('delete', 'Service::delete');
     });
 });
