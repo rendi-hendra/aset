@@ -45,14 +45,14 @@
             <div class="form-group">
               <label>Kode</label>
               <input type="text" name="kode" id="kode" maxlength="10"
-                class="form-control" required>
+                class="form-control" placeholder="Contoh : MON" required>
             </div>
 
             <div class="form-group mb-0">
               <label>Jenis Aset</label>
               <input type="text" name="jenis_aset" id="jenis_aset"
                 maxlength="50"
-                class="form-control" required>
+                class="form-control" placeholder="Contoh : Monitor" required>
             </div>
 
           </form>
