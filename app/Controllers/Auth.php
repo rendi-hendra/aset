@@ -19,7 +19,6 @@ class Auth extends BaseController
     {
         $session = session();
         $model   = new UserModel();
-        var_dump($model->first());
 
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
@@ -37,14 +36,18 @@ class Auth extends BaseController
             return redirect()->back()->with('error', 'Username atau password salah');
         }
 
-        $sessionData = [
-            'userid'     => $user['userid'],
-            'username'   => $user['username'],
-            'nama'       => $user['nama'],
-            'isLoggedIn' => true
-        ];
+        // Blokir guest
+        if ($user['userlevelid'] == 99) {
+            return redirect()->back()->with('error', 'Akun tidak memiliki akses sistem');
+        }
 
-        $session->set($sessionData);
+        $session->set([
+            'userid'       => $user['userid'],
+            'username'     => $user['username'],
+            'nama'         => $user['nama'],
+            'userlevelid'  => $user['userlevelid'],
+            'isLoggedIn'   => true
+        ]);
 
         return redirect()->to('/dashboard');
     }
