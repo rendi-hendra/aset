@@ -46,6 +46,8 @@ class AsetModel extends Model
                 a.pembelianno,
                 a.isdeleted,
                 a.createddate,
+                a.updateddate,
+                a.deleteddate,
                 uc.nama as createdby_name,
                 uu.nama as updatedby_name,
                 ud.nama as deletedby_name

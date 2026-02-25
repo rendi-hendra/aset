@@ -96,7 +96,18 @@
             <?php foreach ($lokasi as $r): ?>
               <?php
               $statusText  = ((int)$r['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
-              $createdDate = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
+              $createdDate = !empty($r['createddate'])
+                ? date('Y-m-d H:i', strtotime($r['createddate']))
+                : '';
+
+              $updatedDate = !empty($r['updateddate'])
+                ? date('Y-m-d H:i', strtotime($r['updateddate']))
+                : '';
+
+              $deletedDate = !empty($r['deleteddate'])
+                ? date('Y-m-d H:i', strtotime($r['deleteddate']))
+                : '';
+
               $dibuatOleh  = $r['createdby_name'] ?? '-';
               $diubahOleh  = $r['updatedby_name'] ?? '-';
               $dihapusOleh = $r['deletedby_name'] ?? '-';
@@ -108,9 +119,17 @@
                 <td><?= esc($r['lokasikode']) ?></td>
                 <td><?= esc($r['lokasi']) ?></td>
                 <td><?= esc($statusText) ?></td>
-                <td><?= esc($createdDate) ?> <?= esc($dibuatOleh) ?></td>
-                <td><?= esc($diubahOleh) ?></td>
-                <td><?= esc($dihapusOleh) ?></td>
+                <td>
+                  <?= esc($createdDate) ?><br><?= esc($dibuatOleh) ?>
+                </td>
+
+                <td>
+                  <?= esc($updatedDate) ?><br><?= esc($diubahOleh) ?>
+                </td>
+
+                <td>
+                  <?= esc($deletedDate) ?><br><?= esc($dihapusOleh) ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

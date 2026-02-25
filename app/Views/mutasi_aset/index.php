@@ -19,10 +19,6 @@
       <button type="submit" form="formDelete" class="btn btn-danger btn-sm" id="btnHapus" disabled>
         <i class="fas fa-trash mr-1"></i> HAPUS
       </button>
-
-      <button type="submit" form="formFilter" class="btn btn-secondary btn-sm">
-        <i class="fas fa-search mr-1"></i> CEK
-      </button>
     </div>
   </div>
 
@@ -112,8 +108,8 @@
                   <?php if (!empty($asetList)): ?>
                     <?php foreach ($asetList as $a): ?>
                       <?php
-                        $label = trim(($a['asetkode'] ?? '') . ' - ' . ($a['jenis'] ?? '') . ' - ' . ($a['merk'] ?? ''));
-                        $selected = ((int)($filter['asetid'] ?? 0) === (int)$a['asetid']) ? 'selected' : '';
+                      $label = trim(($a['asetkode'] ?? '') . ' - ' . ($a['jenis'] ?? '') . ' - ' . ($a['merk'] ?? ''));
+                      $selected = ((int)($filter['asetid'] ?? 0) === (int)$a['asetid']) ? 'selected' : '';
                       ?>
                       <option value="<?= (int)$a['asetid'] ?>" <?= $selected ?>><?= esc($label) ?></option>
                     <?php endforeach; ?>
@@ -134,6 +130,11 @@
 
             <small class="text-muted d-block">
               Filter lalu klik <b>CEK</b> untuk refresh tabel mutasi.
+              <div class="text-right">
+                <button type="submit" form="formFilter" class="btn btn-secondary btn-sm">
+                  <i class="fas fa-search mr-1"></i> CEK
+                </button>
+              </div>
             </small>
           </form>
         </div>
@@ -167,16 +168,15 @@
             <?php else: ?>
               <?php foreach ($rows as $r): ?>
                 <?php
-                  $tglMutasi   = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
-                  $createdDate = $tglMutasi;
-                  $asetLabel   = trim(($r['asetkode'] ?? '') . ' - ' . ($r['jenis'] ?? '') . ' - ' . ($r['merk'] ?? ''));
+                $tglMutasi   = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
+                $createdDate = $tglMutasi;
+                $asetLabel   = trim(($r['asetkode'] ?? '') . ' - ' . ($r['jenis'] ?? '') . ' - ' . ($r['merk'] ?? ''));
                 ?>
                 <tr class="row-mutasi"
                   data-id="<?= (int)$r['asetmoveid'] ?>"
                   data-asetid="<?= (int)($r['asetid'] ?? 0) ?>"
                   data-lokasiawalid="<?= (int)($r['lokasiawalid'] ?? 0) ?>"
-                  data-lokasiakhirid="<?= (int)($r['lokasiakhirid'] ?? 0) ?>"
-                >
+                  data-lokasiakhirid="<?= (int)($r['lokasiakhirid'] ?? 0) ?>">
                   <td class="text-nowrap"><?= esc($r['asetmoveno'] ?? '') ?></td>
                   <td class="text-nowrap"><?= esc($tglMutasi) ?></td>
                   <td class="text-nowrap"><?= esc($asetLabel) ?></td>
@@ -204,11 +204,27 @@
 </div>
 
 <style>
-  #tblMutasi { table-layout: auto; }
-  #tblMutasi th, #tblMutasi td { white-space: nowrap; vertical-align: middle; }
-  #tblMutasi tbody tr { cursor: pointer; }
-  #tblMutasi tbody tr:hover { background: #f8f9fc; }
-  div.dataTables_wrapper { width: 100%; }
+  #tblMutasi {
+    table-layout: auto;
+  }
+
+  #tblMutasi th,
+  #tblMutasi td {
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  #tblMutasi tbody tr {
+    cursor: pointer;
+  }
+
+  #tblMutasi tbody tr:hover {
+    background: #f8f9fc;
+  }
+
+  div.dataTables_wrapper {
+    width: 100%;
+  }
 </style>
 
 <script>
@@ -229,16 +245,23 @@
       responsive: false,
       autoWidth: false,
       pageLength: 10,
-      order: [[1, 'desc']],
+      order: [
+        [1, 'desc']
+      ],
       language: {
         search: "Cari:",
         lengthMenu: "Tampilkan _MENU_ data",
         info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-        paginate: { first: "Awal", last: "Akhir", next: "›", previous: "‹" }
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "›",
+          previous: "‹"
+        }
       }
     });
 
-    function resetForm(){
+    function resetForm() {
       asetmoveid.value = '';
       asetid_form.value = '';
       lokasiawalid.value = '';
@@ -255,14 +278,14 @@
     btnBaru.addEventListener('click', resetForm);
 
     // Auto isi lokasi awal dari lokasi terakhir aset (lokasiid di tabel aset)
-    asetid_form.addEventListener('change', function(){
+    asetid_form.addEventListener('change', function() {
       const opt = asetid_form.options[asetid_form.selectedIndex];
       const currentLokasiId = opt ? (opt.getAttribute('data-current-lokasiid') || '') : '';
       lokasiawalid.value = currentLokasiId || '';
     });
 
     // Klik row => edit (aset & lokasi awal dikunci)
-    $('#tblMutasi tbody').on('click', 'tr', function(){
+    $('#tblMutasi tbody').on('click', 'tr', function() {
       $('#tblMutasi tbody tr').removeClass('table-active');
       $(this).addClass('table-active');
 

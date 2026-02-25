@@ -6,6 +6,11 @@
         <i class="fa fa-bars"></i>
     </button>
 
+    <!-- ====== TAMBAHKAN DI SINI ====== -->
+    <span class="navbar-brand mb-0 h5 font-weight-bold text-primary">
+        System Management Asset
+    </span>
+
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 

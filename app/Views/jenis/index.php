@@ -54,9 +54,7 @@
                 maxlength="50"
                 class="form-control" placeholder="Contoh : Monitor" required>
             </div>
-
           </form>
-
         </div>
       </div>
     </div>
@@ -85,7 +83,18 @@
             <?php foreach ($jenis as $j): ?>
               <?php
               $statusText  = ((int)$j['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
-              $createdDate = !empty($j['createddate']) ? date('Y-m-d', strtotime($j['createddate'])) : '';
+              $createdDate = !empty($j['createddate'])
+                ? date('Y-m-d H:i', strtotime($j['createddate']))
+                : '';
+
+              $updatedDate = !empty($j['updateddate'])
+                ? date('Y-m-d H:i', strtotime($j['updateddate']))
+                : '';
+
+              $deletedDate = !empty($j['deleteddate'])
+                ? date('Y-m-d H:i', strtotime($j['deleteddate']))
+                : '';
+
               $dibuatOleh  = $j['createdby_name'] ?? '-';
               $diubahOleh  = $j['updatedby_name'] ?? '-';
               $dihapusOleh = $j['deletedby_name'] ?? '-';
@@ -97,9 +106,17 @@
                 <td><?= esc($j['jeniskode']) ?></td>
                 <td><?= esc($j['jenis']) ?></td>
                 <td><?= esc($statusText) ?></td>
-                <td><?= esc($createdDate) ?> <?= esc($dibuatOleh) ?></td>
-                <td><?= esc($diubahOleh) ?></td>
-                <td><?= esc($dihapusOleh) ?></td>
+                <td>
+                  <?= esc($createdDate) ?><br><?= esc($dibuatOleh) ?>
+                </td>
+
+                <td>
+                  <?= esc($updatedDate) ?><br><?= esc($diubahOleh) ?>
+                </td>
+
+                <td>
+                  <?= esc($deletedDate) ?><br><?= esc($dihapusOleh) ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

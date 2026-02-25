@@ -99,9 +99,33 @@
                 <td><?= esc($v['vendor']) ?></td>
                 <td><?= esc($v['alamat']) ?></td>
                 <td><?= esc($statusText) ?></td>
-                <td><?= esc($createdDate) ?> <?= esc($v['createdby_name'] ?? '-') ?></td>
-                <td><?= esc($v['updatedby_name'] ?? '-') ?></td>
-                <td><?= esc($v['deletedby_name'] ?? '-') ?></td>
+                <?php $createdDate = !empty($v['createddate'])
+                ? date('Y-m-d H:i', strtotime($v['createddate']))
+                : '';
+
+              $updatedDate = !empty($v['updateddate'])
+                ? date('Y-m-d H:i', strtotime($v['updateddate']))
+                : '';
+
+              $deletedDate = !empty($v['deleteddate'])
+                ? date('Y-m-d H:i', strtotime($v['deleteddate']))
+                : '';
+
+              $dibuatOleh  = $v['createdby_name'] ?? '-';
+              $diubahOleh  = $v['updatedby_name'] ?? '-';
+              $dihapusOleh = $v['deletedby_name'] ?? '-';
+              ?>
+              <td>
+                <?= esc($createdDate) ?><br><?= esc($dibuatOleh) ?>
+              </td>
+
+              <td>
+                <?= esc($updatedDate) ?><br><?= esc($diubahOleh) ?>
+              </td>
+
+              <td>
+                <?= esc($deletedDate) ?><br><?= esc($dihapusOleh) ?>
+              </td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

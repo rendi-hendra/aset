@@ -84,7 +84,18 @@
             <?php foreach ($merk as $m): ?>
               <?php
               $statusText  = ((int)$m['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
-              $createdDate = !empty($m['createddate']) ? date('Y-m-d', strtotime($m['createddate'])) : '';
+              $createdDate = !empty($m['createddate'])
+                ? date('Y-m-d H:i', strtotime($m['createddate']))
+                : '';
+
+              $updatedDate = !empty($m['updateddate'])
+                ? date('Y-m-d H:i', strtotime($m['updateddate']))
+                : '';
+
+              $deletedDate = !empty($m['deleteddate'])
+                ? date('Y-m-d H:i', strtotime($m['deleteddate']))
+                : '';
+
               $dibuatOleh  = $m['createdby_name'] ?? '-';
               $diubahOleh  = $m['updatedby_name'] ?? '-';
               $dihapusOleh = $m['deletedby_name'] ?? '-';
@@ -94,9 +105,17 @@
                 data-merk="<?= esc($m['merk']) ?>">
                 <td><?= esc($m['merk']) ?></td>
                 <td><?= esc($statusText) ?></td>
-                <td><?= esc($createdDate) ?> <?= esc($dibuatOleh) ?></td>
-                <td><?= esc($diubahOleh) ?></td>
-                <td><?= esc($dihapusOleh) ?></td>
+                <td>
+                  <?= esc($createdDate) ?><br><?= esc($dibuatOleh) ?>
+                </td>
+
+                <td>
+                  <?= esc($updatedDate) ?><br><?= esc($diubahOleh) ?>
+                </td>
+
+                <td>
+                  <?= esc($deletedDate) ?><br><?= esc($dihapusOleh) ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

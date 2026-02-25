@@ -50,8 +50,7 @@
                   name="asetkode"
                   id="asetkode"
                   maxlength="20"
-                  placeholder="Kosongkan untuk auto-generate"
-                  >
+                  placeholder="Kosongkan untuk auto-generate">
                 <small class="text-muted">Jika dikosongkan, sistem akan buat otomatis.</small>
               </div>
 
@@ -153,9 +152,24 @@
             <?php else: ?>
               <?php foreach ($aset as $a): ?>
                 <?php
-                  $statusText  = ((int)$a['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
-                  $tglBeli     = !empty($a['pembeliandate']) ? date('Y-m-d', strtotime($a['pembeliandate'])) : '';
-                  $createdDate = !empty($a['createddate']) ? date('Y-m-d', strtotime($a['createddate'])) : '';
+                $statusText  = ((int)$a['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
+                $tglBeli     = !empty($a['pembeliandate']) ? date('Y-m-d', strtotime($a['pembeliandate'])) : '';
+
+                $createdDate = !empty($a['createddate'])
+                  ? date('Y-m-d H:i', strtotime($a['createddate']))
+                  : '';
+
+                $updatedDate = !empty($a['updateddate'])
+                  ? date('Y-m-d H:i', strtotime($a['updateddate']))
+                  : '';
+
+                $deletedDate = !empty($a['deleteddate'])
+                  ? date('Y-m-d H:i', strtotime($a['deleteddate']))
+                  : '';
+
+                $dibuatOleh  = $a['createdby_name'] ?? '-';
+                $diubahOleh  = $a['updatedby_name'] ?? '-';
+                $dihapusOleh = $a['deletedby_name'] ?? '-';
                 ?>
                 <tr class="row-aset"
                   data-id="<?= (int)$a['asetid'] ?>"
@@ -164,8 +178,7 @@
                   data-merkid="<?= (int)($a['merkid'] ?? 0) ?>"
                   data-lokasiid="<?= (int)($a['lokasiid'] ?? 0) ?>"
                   data-pembeliandate="<?= esc($tglBeli) ?>"
-                  data-pembelianno="<?= esc($a['pembelianno'] ?? '') ?>"
-                >
+                  data-pembelianno="<?= esc($a['pembelianno'] ?? '') ?>">
                   <td class="text-nowrap"><?= esc($a['asetkode'] ?? '') ?></td>
                   <td class="text-nowrap"><?= esc($a['jenis'] ?? '-') ?></td>
                   <td class="text-nowrap"><?= esc($a['merk'] ?? '-') ?></td>
@@ -173,9 +186,20 @@
                   <td class="text-nowrap"><?= esc($tglBeli) ?></td>
                   <td class="text-nowrap"><?= esc($a['pembelianno'] ?? '') ?></td>
                   <td class="text-nowrap"><?= esc($statusText) ?></td>
-                  <td class="text-nowrap"><?= esc($createdDate) ?> <?= esc($a['createdby_name'] ?? '-') ?></td>
-                  <td class="text-nowrap"><?= esc($a['updatedby_name'] ?? '-') ?></td>
-                  <td class="text-nowrap"><?= esc($a['deletedby_name'] ?? '-') ?></td>
+                  <td>
+                    <?= esc($createdDate) ?><br>
+                    <small class="text-muted"><?= esc($dibuatOleh) ?></small>
+                  </td>
+
+                  <td>
+                    <?= esc($updatedDate) ?><br>
+                    <small class="text-muted"><?= esc($diubahOleh) ?></small>
+                  </td>
+
+                  <td>
+                    <?= esc($deletedDate) ?><br>
+                    <small class="text-muted"><?= esc($dihapusOleh) ?></small>
+                  </td>
                 </tr>
               <?php endforeach; ?>
             <?php endif; ?>
@@ -201,10 +225,13 @@
   }
 
   /* pastikan text gak dibikin turun per huruf */
-  #tblAset th, #tblAset td {
-    white-space: nowrap;
-    vertical-align: middle;
-  }
+  #tblAset th {
+  white-space: nowrap;
+}
+
+#tblAset td {
+  vertical-align: middle;
+}
 
   #tblAset tbody tr {
     cursor: pointer;
@@ -223,18 +250,18 @@
 <script>
   $(document).ready(function() {
 
-    const btnBaru  = document.getElementById('btnBaru');
+    const btnBaru = document.getElementById('btnBaru');
     const btnHapus = document.getElementById('btnHapus');
 
-    const asetid        = document.getElementById('asetid');
-    const asetkode      = document.getElementById('asetkode');
-    const jenisid       = document.getElementById('jenisid');
+    const asetid = document.getElementById('asetid');
+    const asetkode = document.getElementById('asetkode');
+    const jenisid = document.getElementById('jenisid');
     const pembeliandate = document.getElementById('pembeliandate');
-    const merkid        = document.getElementById('merkid');
-    const lokasiid      = document.getElementById('lokasiid');
-    const pembelianno   = document.getElementById('pembelianno');
+    const merkid = document.getElementById('merkid');
+    const lokasiid = document.getElementById('lokasiid');
+    const pembelianno = document.getElementById('pembelianno');
 
-    const del_asetid    = document.getElementById('del_asetid');
+    const del_asetid = document.getElementById('del_asetid');
 
     const table = $('#tblAset').DataTable({
       // kunci rapih: biarkan dia scroll horizontal, bukan maksa menyempit
@@ -242,12 +269,19 @@
       responsive: false,
       autoWidth: false,
       pageLength: 10,
-      order: [[0, 'desc']],
+      order: [
+        [0, 'desc']
+      ],
       language: {
         search: "Cari:",
         lengthMenu: "Tampilkan _MENU_ data",
         info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-        paginate: { first: "Awal", last: "Akhir", next: "›", previous: "‹" }
+        paginate: {
+          first: "Awal",
+          last: "Akhir",
+          next: "›",
+          previous: "‹"
+        }
       }
     });
 
@@ -274,13 +308,13 @@
 
       const row = $(this);
 
-      asetid.value        = row.data('id') ?? '';
-      asetkode.value      = row.data('asetkode') ?? '';
-      jenisid.value       = row.data('jenisid') ?? '';
-      merkid.value        = row.data('merkid') ?? '';
-      lokasiid.value      = row.data('lokasiid') ?? '';
+      asetid.value = row.data('id') ?? '';
+      asetkode.value = row.data('asetkode') ?? '';
+      jenisid.value = row.data('jenisid') ?? '';
+      merkid.value = row.data('merkid') ?? '';
+      lokasiid.value = row.data('lokasiid') ?? '';
       pembeliandate.value = row.data('pembeliandate') ?? '';
-      pembelianno.value   = row.data('pembelianno') ?? '';
+      pembelianno.value = row.data('pembelianno') ?? '';
 
       del_asetid.value = row.data('id') ?? '';
       btnHapus.disabled = !del_asetid.value;
