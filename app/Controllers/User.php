@@ -16,7 +16,8 @@ class User extends BaseController
 
     public function index()
     {
-        $users = $this->userModel->getUser()->findAll();
+        // FIX: getUser() itu Query Builder -> harus get()->getResultArray()
+        $users = $this->userModel->getUser()->get()->getResultArray();
 
         return view('users/index', [
             'users' => $users,
@@ -27,10 +28,10 @@ class User extends BaseController
     public function save()
     {
         $id          = $this->request->getPost('userid'); // bisa kosong
-        $username    = strtolower(trim((string)$this->request->getPost('username')));
-        $nama        = trim((string)$this->request->getPost('nama'));
-        $userlevelid = (int)($this->request->getPost('userlevelid') ?? 2);
-        $passwordIn  = (string)($this->request->getPost('password') ?? '');
+        $username    = strtolower(trim((string) $this->request->getPost('username')));
+        $nama        = trim((string) $this->request->getPost('nama'));
+        $userlevelid = (int) ($this->request->getPost('userlevelid') ?? 2);
+        $passwordIn  = (string) ($this->request->getPost('password') ?? '');
 
         if ($username === '' || $nama === '') {
             return redirect()->to('/users')->with('error', 'Username dan Nama wajib diisi.');
@@ -39,7 +40,8 @@ class User extends BaseController
         // Validasi userlevel yang diizinkan
         $allowedLevels = [0, 1, 2, 99];
         if (!in_array($userlevelid, $allowedLevels, true)) {
-            $userlevelid = 3;
+            // FIX: default yang bener = 2 (User), bukan 3
+            $userlevelid = 2;
         }
 
         $userIdLogin = (int) session()->get('userid');
@@ -54,38 +56,33 @@ class User extends BaseController
         $getDefaultPassword = function (): string {
             $db = \Config\Database::connect();
 
-            // cari berdasarkan variable dulu (lebih aman)
             $row = $db->table('syssetting')
                 ->select('value')
                 ->where('variable', 'DEFAULTUSERPASSWORD')
                 ->get()
                 ->getRowArray();
 
-            if (!empty($row['value'])) return (string)$row['value'];
+            if (!empty($row['value'])) return (string) $row['value'];
 
-            // fallback: syssettingid=1 kalau kamu pakai patokan itu
             $row2 = $db->table('syssetting')
                 ->select('value')
                 ->where('syssettingid', 1)
                 ->get()
                 ->getRowArray();
 
-            if (!empty($row2['value'])) return (string)$row2['value'];
+            if (!empty($row2['value'])) return (string) $row2['value'];
 
-            // fallback terakhir
             return 'Ekahusada-123';
         };
 
         if (!empty($existing)) {
             // Kalau sedang edit record yang sama -> lanjut update normal
-            if (!empty($id) && (int)$existing['userid'] === (int)$id) {
+            if (!empty($id) && (int) $existing['userid'] === (int) $id) {
                 // lanjut
             } else {
                 // Kalau ketemu tapi non-aktif -> RESTORE
-                if ((int)$existing['isdeleted'] === 1) {
-                    // password restore:
-                    // - kalau user isi password, pakai itu
-                    // - kalau kosong, biarkan password lama tetap (lebih aman)
+                if ((int) $existing['isdeleted'] === 1) {
+
                     $updateRestore = [
                         'username'    => $username,
                         'nama'        => $nama,
@@ -101,12 +98,11 @@ class User extends BaseController
                         $updateRestore['password'] = password_hash($passwordIn, PASSWORD_DEFAULT);
                     }
 
-                    $this->userModel->update($existing['userid'], $updateRestore);
+                    $this->userModel->update((int) $existing['userid'], $updateRestore);
 
                     return redirect()->to('/users')->with('success', 'User sebelumnya non-aktif, sudah diaktifkan lagi.');
                 }
 
-                // Kalau masih aktif -> tolak
                 return redirect()->to('/users')->with('error', 'Username sudah ada.');
             }
         }
@@ -121,12 +117,11 @@ class User extends BaseController
                 'updateddate' => $now,
             ];
 
-            // Password hanya berubah kalau diisi
             if (trim($passwordIn) !== '') {
                 $payload['password'] = password_hash($passwordIn, PASSWORD_DEFAULT);
             }
 
-            $this->userModel->update($id, $payload);
+            $this->userModel->update((int) $id, $payload);
 
             return redirect()->to('/users')->with('success', 'Data user berhasil diubah.');
         }
@@ -150,7 +145,7 @@ class User extends BaseController
     // soft delete via POST
     public function delete()
     {
-        $id = (int)($this->request->getPost('userid') ?? 0);
+        $id = (int) ($this->request->getPost('userid') ?? 0);
 
         if ($id <= 0) {
             return redirect()->to('/users')->with('error', 'Pilih user dulu.');

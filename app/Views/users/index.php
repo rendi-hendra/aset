@@ -3,6 +3,20 @@
 
 <div class="container-fluid">
 
+  <?php
+  function userLevelText($id): string
+  {
+    $id = (int) $id;
+    return match ($id) {
+      0 => 'Superadmin',
+      1 => 'Admin',
+      2 => 'User',
+      99 => 'Guest',
+      default => 'Unknown',
+    };
+  }
+  ?>
+
   <!-- HEADER -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="font-weight-bold text-gray-800 m-0">USER</h4>
@@ -67,7 +81,7 @@
                   <select class="form-control" name="userlevelid" id="userlevelid">
                     <option value="0">Superadmin</option>
                     <option value="1">Admin</option>
-                    <option value="2" selected>User</option>
+                    <option value="2">User</option>
                     <option value="99">Guest</option>
                   </select>
                 </div>
@@ -93,6 +107,7 @@
           <tr>
             <th style="width:180px;">Username</th>
             <th>Nama</th>
+            <th style="width:140px;">User Level</th>
             <th style="width:120px;">Status</th>
             <th style="width:180px;">Dibuat Oleh</th>
             <th style="width:180px;">Diubah Oleh</th>
@@ -102,13 +117,14 @@
         <tbody>
           <?php if (empty($users)): ?>
             <tr>
-              <td colspan="6" class="text-center text-muted">Belum ada data.</td>
+              <td colspan="7" class="text-center text-muted">Belum ada data.</td>
             </tr>
           <?php else: ?>
             <?php foreach ($users as $u): ?>
               <?php
-              $statusText  = ((int)$u['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
-              $createdDate = !empty($u['createddate'])
+                $statusText  = ((int)$u['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
+
+                $createdDate = !empty($u['createddate'])
                   ? date('Y-m-d H:i', strtotime($u['createddate']))
                   : '';
 
@@ -123,30 +139,36 @@
                 $dibuatOleh  = $u['createdby_name'] ?? '-';
                 $diubahOleh  = $u['updatedby_name'] ?? '-';
                 $dihapusOleh = $u['deletedby_name'] ?? '-';
+
+                $lvlId = (int)($u['userlevelid'] ?? 2);
+                $lvlTextFromDb = $u['userlevel_name'] ?? null;
+                $lvlText = (!empty($lvlTextFromDb)) ? (string)$lvlTextFromDb : userLevelText($lvlId);
               ?>
               <tr class="row-user"
                 data-id="<?= (int)$u['userid'] ?>"
                 data-username="<?= esc($u['username']) ?>"
                 data-nama="<?= esc($u['nama']) ?>"
-                data-userlevelid="<?= (int)($u['userlevelid'] ?? 2) ?>"
-                data-status="<?= $statusText ?>">
+                data-userlevelid="<?= $lvlId ?>"
+                data-status="<?= esc($statusText) ?>">
                 <td><?= esc($u['username']) ?></td>
                 <td><?= esc($u['nama']) ?></td>
+                <td><?= esc($lvlText) ?></td>
                 <td><?= esc($statusText) ?></td>
+
                 <td>
-                    <?= esc($createdDate) ?><br>
-                    <?= esc($dibuatOleh) ?>
-                  </td>
+                  <?= esc($createdDate) ?><br>
+                  <?= esc($dibuatOleh) ?>
+                </td>
 
-                  <td>
-                    <?= esc($updatedDate) ?><br>
-                    <?= esc($diubahOleh) ?>
-                  </td>
+                <td>
+                  <?= esc($updatedDate) ?><br>
+                  <?= esc($diubahOleh) ?>
+                </td>
 
-                  <td>
-                    <?= esc($deletedDate) ?><br>
-                    <?= esc($dihapusOleh) ?>
-                  </td>
+                <td>
+                  <?= esc($deletedDate) ?><br>
+                  <?= esc($dihapusOleh) ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>
@@ -164,23 +186,10 @@
 </div>
 
 <style>
-  #tblUser {
-    table-layout: fixed;
-    width: 100%;
-  }
-
-  #tblUser td,
-  #tblUser th {
-    vertical-align: middle;
-  }
-
-  #tblUser tbody tr {
-    cursor: pointer;
-  }
-
-  #tblUser tbody tr:hover {
-    background: #f8f9fc;
-  }
+  #tblUser { table-layout: fixed; width: 100%; }
+  #tblUser td, #tblUser th { vertical-align: middle; }
+  #tblUser tbody tr { cursor: pointer; }
+  #tblUser tbody tr:hover { background: #f8f9fc; }
 </style>
 
 <script>
@@ -196,24 +205,16 @@
     const userlevelid = document.getElementById('userlevelid');
     const del_userid = document.getElementById('del_userid');
 
-    // INIT DATATABLE
     const table = $('#tblUser').DataTable({
       responsive: true,
       autoWidth: false,
       pageLength: 10,
-      order: [
-        [0, 'asc']
-      ],
+      order: [[0, 'asc']],
       language: {
         search: "Cari:",
         lengthMenu: "Tampilkan _MENU_ data",
         info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-        paginate: {
-          first: "Awal",
-          last: "Akhir",
-          next: "›",
-          previous: "‹"
-        }
+        paginate: { first: "Awal", last: "Akhir", next: "›", previous: "‹" }
       }
     });
 
@@ -231,7 +232,7 @@
 
     btnDefault.addEventListener('click', resetFormDefault);
 
-    // CLICK ROW (WAJIB pakai on() karena DataTables redraw DOM)
+    // FIX: ambil dari attribute HTML pakai attr() biar stabil di DataTables redraw
     $('#tblUser tbody').on('click', 'tr', function() {
 
       $('#tblUser tbody tr').removeClass('table-active');
@@ -239,24 +240,19 @@
 
       const row = $(this);
 
-      userid.value = row.data('id');
-      username.value = row.data('username');
-      nama.value = row.data('nama');
-      userlevelid.value = row.data('userlevelid') || '2';
+      userid.value = row.attr('data-id') || '';
+      username.value = row.attr('data-username') || '';
+      nama.value = row.attr('data-nama') || '';
+      userlevelid.value = row.attr('data-userlevelid') || '2';
       password.value = '';
 
-      del_userid.value = row.data('id');
+      del_userid.value = row.attr('data-id') || '';
 
-      if (row.data('status') === 'TIDAK AKTIF') {
-        btnHapus.disabled = true;
-      } else {
-        btnHapus.disabled = false;
-      }
-
+      const status = (row.attr('data-status') || '').toString().toLowerCase();
+      btnHapus.disabled = (status === 'tidak aktif');
     });
 
   });
 </script>
-
 
 <?= $this->endSection() ?>
