@@ -36,13 +36,28 @@ class Dashboard extends BaseController
         ];
 
         // =========================
-        // HITUNG STATUS (FILTER BY asetservicedate)
+        // Subquery: detail TERAKHIR per asetservice (PostgreSQL DISTINCT ON)
         // =========================
-        $rowsStatus = $db->table('asetservice')
-            ->select('servicestatusid, COUNT(*) as total')
-            ->where('isdeleted', 0)
-            ->where('asetservicedate', $date)
-            ->groupBy('servicestatusid')
+        $latestServiceDtSql = '
+            (
+                SELECT DISTINCT ON (d.asetserviceid)
+                    d.asetserviceid,
+                    d.asetservicedate
+                FROM asetservicedt d
+                WHERE d.isdeleted = 0
+                ORDER BY d.asetserviceid, d.asetservicedtid DESC
+            ) dt
+        ';
+
+        // =========================
+        // HITUNG STATUS (FILTER BY dt.asetservicedate)
+        // =========================
+        $rowsStatus = $db->table('asetservice s')
+            ->select('s.servicestatusid, COUNT(*) as total')
+            ->join($latestServiceDtSql, 'dt.asetserviceid = s.asetserviceid', 'inner', false)
+            ->where('s.isdeleted', 0)
+            ->where('dt.asetservicedate', $date)
+            ->groupBy('s.servicestatusid')
             ->get()
             ->getResultArray();
 
@@ -73,9 +88,6 @@ class Dashboard extends BaseController
         // OPSI B: LOKASI AMBIL DARI MUTASI TERAKHIR (asetmove)
         // - Kalau belum pernah mutasi, fallback ke aset.lokasiid
         // =========================
-
-        // Subquery: ambil mutasi terakhir per aset (berdasarkan createddate terbaru)
-        // Catatan: pakai DISTINCT ON (PostgreSQL)
         $latestMoveSql = '
             (
                 SELECT DISTINCT ON (am.asetid)
@@ -89,12 +101,12 @@ class Dashboard extends BaseController
 
         $rowsLokasi = $db->table('asetservice s')
             ->select('UPPER(l.lokasi) AS lokasi, COUNT(*) AS total')
+            ->join($latestServiceDtSql, 'dt.asetserviceid = s.asetserviceid', 'inner', false)
             ->join('aset a', 'a.asetid = s.asetid', 'left')
             ->join($latestMoveSql, 'lm.asetid = s.asetid', 'left', false)
-            // pakai COALESCE: kalau ada mutasi terakhir -> lokasiakhirid, kalau tidak -> aset.lokasiid
             ->join('lokasi l', 'l.lokasiid = COALESCE(lm.lokasiakhirid, a.lokasiid)', 'left', false)
             ->where('s.isdeleted', 0)
-            ->where('s.asetservicedate', $date)
+            ->where('dt.asetservicedate', $date)
             ->groupBy('UPPER(l.lokasi)')
             ->get()
             ->getResultArray();

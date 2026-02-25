@@ -261,8 +261,8 @@
       autoWidth: false,
       pageLength: 10,
       order: [
-        [3, 'desc']
-      ], // No Service
+        [2, 'desc']
+      ], // Tgl Service
       language: {
         search: "Cari:",
         lengthMenu: "Tampilkan _MENU_ data",
