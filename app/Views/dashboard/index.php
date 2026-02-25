@@ -11,7 +11,7 @@
     <!-- Content Row -->
     <div class="row">
 
-        <!-- Card 1 -->
+        <!-- Total User -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <!-- Card 2 -->
+        <!-- Welcome -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
@@ -53,8 +53,32 @@
             </div>
         </div>
 
-    </div>
+        <!-- Service Status Cards -->
+        <?php if (!empty($statusMap)): ?>
+            <?php foreach ($statusMap as $key => $label): ?>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card shadow h-100 py-2 border-left-info">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        <?= esc($label) ?>
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <?= esc($statusCount[$key] ?? 0) ?>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-tools fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
 
+    </div>
 </div>
 
 <?= $this->endSection() ?>
