@@ -154,7 +154,20 @@
                 <?php
                 $statusText  = ((int)$r['isdeleted'] === 0) ? 'AKTIF' : 'TIDAK AKTIF';
                 $tglSvc      = !empty($r['asetservicedate']) ? date('Y-m-d', strtotime($r['asetservicedate'])) : '';
-                $createdDate = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
+                $createdDate = !empty($r['createddate'])
+                  ? date('Y-m-d H:i', strtotime($r['createddate']))
+                  : '';
+
+                $updatedDate = !empty($r['updateddate'])
+                  ? date('Y-m-d H:i', strtotime($r['updateddate']))
+                  : '';
+
+                $deletedDate = !empty($r['deleteddate'])
+                  ? date('Y-m-d H:i', strtotime($r['deleteddate']))
+                  : '';
+                $dibuatOleh  = $r['createdby_name'] ?? '-';
+                $diubahOleh  = $r['updatedby_name'] ?? '-';
+                $dihapusOleh = $r['deletedby_name'] ?? '-';
                 $asetLabel   = trim(($r['asetkode'] ?? '') . ' - ' . ($r['jenis'] ?? '') . ' - ' . ($r['merk'] ?? ''));
                 ?>
 
@@ -173,9 +186,17 @@
                   <td><?= esc($r['remarks'] ?? '') ?></td>
                   <td class="text-nowrap"><?= esc($r['servicestatus'] ?? '-') ?></td>
                   <td class="text-nowrap"><?= esc($statusText) ?></td>
-                  <td class="text-nowrap"><?= esc($createdDate) ?> <?= esc($r['createdby_name'] ?? '-') ?></td>
-                  <td class="text-nowrap"><?= esc($r['updatedby_name'] ?? '-') ?></td>
-                  <td class="text-nowrap"><?= esc($r['deletedby_name'] ?? '-') ?></td>
+                  <td>
+                    <?= esc($createdDate) ?><br><?= esc($dibuatOleh) ?>
+                  </td>
+
+                  <td>
+                    <?= esc($updatedDate) ?><br><?= esc($diubahOleh) ?>
+                  </td>
+
+                  <td>
+                    <?= esc($deletedDate) ?><br><?= esc($dihapusOleh) ?>
+                  </td>
                 </tr>
 
               <?php endforeach; ?>

@@ -99,7 +99,8 @@
                 <td><?= esc($v['vendor']) ?></td>
                 <td><?= esc($v['alamat']) ?></td>
                 <td><?= esc($statusText) ?></td>
-                <?php $createdDate = !empty($v['createddate'])
+                <?php 
+              $createdDate = !empty($v['createddate'])
                 ? date('Y-m-d H:i', strtotime($v['createddate']))
                 : '';
 

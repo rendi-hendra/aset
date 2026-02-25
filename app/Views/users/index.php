@@ -108,12 +108,21 @@
             <?php foreach ($users as $u): ?>
               <?php
               $statusText  = ((int)$u['isdeleted'] === 0) ? 'Aktif' : 'Tidak Aktif';
-              $createdDate = !empty($u['createddate']) ? date('Y-m-d', strtotime($u['createddate'])) : '';
-              $updatedDate = !empty($u['updateddate']) ? date('Y-m-d', strtotime($u['updateddate'])) : '';
-              $deletedDate = !empty($u['deleteddate']) ? date('Y-m-d', strtotime($u['deleteddate'])) : '';
-              $dibuatOleh  = $u['createdby_name'] ?? '-';
-              $diubahOleh  = $u['updatedby_name'] ?? '-';
-              $dihapusOleh = $u['deletedby_name'] ?? '-';
+              $createdDate = !empty($u['createddate'])
+                  ? date('Y-m-d H:i', strtotime($u['createddate']))
+                  : '';
+
+                $updatedDate = !empty($u['updateddate'])
+                  ? date('Y-m-d H:i', strtotime($u['updateddate']))
+                  : '';
+
+                $deletedDate = !empty($u['deleteddate'])
+                  ? date('Y-m-d H:i', strtotime($u['deleteddate']))
+                  : '';
+
+                $dibuatOleh  = $u['createdby_name'] ?? '-';
+                $diubahOleh  = $u['updatedby_name'] ?? '-';
+                $dihapusOleh = $u['deletedby_name'] ?? '-';
               ?>
               <tr class="row-user"
                 data-id="<?= (int)$u['userid'] ?>"
@@ -124,9 +133,20 @@
                 <td><?= esc($u['username']) ?></td>
                 <td><?= esc($u['nama']) ?></td>
                 <td><?= esc($statusText) ?></td>
-                <td><?= esc($createdDate) ?> <?= esc($dibuatOleh) ?></td>
-                <td><?= esc($updatedDate) ?> <?= esc($diubahOleh) ?></td>
-                <td><?= esc($deletedDate) ?> <?= esc($dihapusOleh) ?></td>
+                <td>
+                    <?= esc($createdDate) ?><br>
+                    <?= esc($dibuatOleh) ?>
+                  </td>
+
+                  <td>
+                    <?= esc($updatedDate) ?><br>
+                    <?= esc($diubahOleh) ?>
+                  </td>
+
+                  <td>
+                    <?= esc($deletedDate) ?><br>
+                    <?= esc($dihapusOleh) ?>
+                  </td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

@@ -41,6 +41,8 @@ class AsetServiceModel extends Model
             ss.servicestatus,
             s.isdeleted,
             s.createddate,
+            s.updateddate,
+            s.deleteddate,
             uc.nama as createdby_name,
             uu.nama as updatedby_name,
             ud.nama as deletedby_name,
@@ -57,7 +59,6 @@ class AsetServiceModel extends Model
             ->join('"user" uc', 'uc.userid = s.createdby', 'left')
             ->join('"user" uu', 'uu.userid = s.updateby', 'left')
             ->join('"user" ud', 'ud.userid = s.deletedby', 'left')
-            ->where('COALESCE(s.isdeleted,0)', 0)
             ->orderBy('s.asetserviceid', 'DESC')
             ->get()
             ->getResultArray();

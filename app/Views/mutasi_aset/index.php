@@ -168,8 +168,31 @@
             <?php else: ?>
               <?php foreach ($rows as $r): ?>
                 <?php
-                $tglMutasi   = !empty($r['createddate']) ? date('Y-m-d', strtotime($r['createddate'])) : '';
-                $createdDate = $tglMutasi;
+                $tglMutasi = !empty($r['createddate'])
+                  ? date('Y-m-d', strtotime($r['createddate']))
+                  : '';
+
+                $createdDate = !empty($r['createddate'])
+                  ? date('Y-m-d H:i', strtotime($r['createddate']))
+                  : '';
+
+                $updatedDate = !empty($r['updateddate'])
+                  ? date('Y-m-d H:i', strtotime($r['updateddate']))
+                  : '';
+
+                $deletedDate = !empty($r['deleteddate'])
+                  ? date('Y-m-d H:i', strtotime($r['deleteddate']))
+                  : '';
+
+                $dibuatOleh  = $r['createdby_name'] ?? '-';
+                $diubahOleh  = $r['updatedby_name'] ?? '-';
+                $dihapusOleh = $r['deletedby_name'] ?? '-';
+
+                $asetLabel = trim(
+                  ($r['asetkode'] ?? '') . ' - ' .
+                    ($r['jenis'] ?? '') . ' - ' .
+                    ($r['merk'] ?? '')
+                );
                 $asetLabel   = trim(($r['asetkode'] ?? '') . ' - ' . ($r['jenis'] ?? '') . ' - ' . ($r['merk'] ?? ''));
                 ?>
                 <tr class="row-mutasi"
@@ -183,9 +206,20 @@
                   <td class="text-nowrap"><?= esc($r['pembelianno'] ?? '-') ?></td>
                   <td class="text-nowrap"><?= esc($r['lokasi_awal'] ?? '-') ?></td>
                   <td class="text-nowrap"><?= esc($r['lokasi_akhir'] ?? '-') ?></td>
-                  <td class="text-nowrap"><?= esc($createdDate) ?> <?= esc($r['createdby_name'] ?? '-') ?></td>
-                  <td class="text-nowrap"><?= esc($r['updatedby_name'] ?? '-') ?></td>
-                  <td class="text-nowrap"><?= esc($r['deletedby_name'] ?? '-') ?></td>
+                  <td>
+                    <?= esc($createdDate) ?><br>
+                    <?= esc($dibuatOleh) ?>
+                  </td>
+
+                  <td>
+                    <?= esc($updatedDate) ?><br>
+                    <?= esc($diubahOleh) ?>
+                  </td>
+
+                  <td>
+                    <?= esc($deletedDate) ?><br>
+                    <?= esc($dihapusOleh) ?>
+                  </td>
                 </tr>
               <?php endforeach; ?>
             <?php endif; ?>
@@ -268,6 +302,9 @@
       lokasiakhirid.value = '';
       del_asetmoveid.value = '';
       btnHapus.disabled = true;
+      
+      asetid_form.style.pointerEvents = 'auto';
+      asetid_form.style.backgroundColor = '';
 
       asetid_form.disabled = false;
       lokasiakhirid.disabled = false;
@@ -300,7 +337,8 @@
       btnHapus.disabled = !del_asetmoveid.value;
 
       // kunci aset & lokasi awal (histori), boleh edit lokasi akhir
-      asetid_form.disabled = true;
+      asetid_form.style.pointerEvents = 'none';
+      asetid_form.style.backgroundColor = '#e9ecef';
     });
 
   });
